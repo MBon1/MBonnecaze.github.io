@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<!--
+	Halcyonic by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Programming Languages Assignment 3</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+</head>
+
+<body class="subpage">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Logo -->
+<!-- 						
+						<h1><a href="index.html" id="logo">Matthew Bonnecaze</a></h1>
+ -->
+						<a href="index.html" id="logo">
+							<img src="images/Matthew2.png"></a>
+						</a>
+
+						<!-- Nav -->
+						<nav id="nav">
+							<a href="index.html">Home</a>
+							<a href="https://www.linkedin.com/in/bonnem/" class="icon brands fab fa-linkedin"></a>
+							<a href="#" class="icon brands fab fa-github"></a>
+						</nav>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Content -->
+		<section id="content">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Main Content -->
+						<section>
+							<header>
+								<h2>Programming Languages Assignment 3</h2>
+								<h3>Language: Prolog</h3>
+							</header>
+							<p>
+								In this assignment for my Programming Languages class, I wrote a program in Prolog in a team of two that implemented natural language processing.  
+								<br><br>
+								This program takes several definitions of processor attributes, each definition containing the processor’s core count, area, and cost.  The program will also take constraints for each of these attributes.  
+								<br><br>
+								After the definitions and constraints are given, the program will compute and display how many of each processor can be placed on a chip so that the given constraints are satisfied.  
+
+							</p>
+							<p>
+								<h3>DEMO</h3>
+								When working on this assignment, I focused first on defining natural language grammars, which I used to extract the information from each given sentence and stored in a list asserted as new clauses into the database.  With the information about the processors and constraints, I wrote procedures to retrieve the processors and constraints and to verify that the constraints were met.  
+							</p>
+							
+							<p>
+								<div class="container">
+									<div class="row">
+										<div class="col-6 col-12-medium">
+											Example 1 Input (procSpec1.txt)
+											<div class="codeBlockHeight300">
+												<pre>
+													<code>
+	Processor type a has 16 cores, uses 4 square centimeters, and costs 1000 dollars.
+	Processor type b has 8 cores, uses 3 square centimeters, and costs 100 dollars.
+	Processor type c has 4 cores, uses 2 square centimeters, and costs 10 dollars.
+	Processor type d has 2 cores, uses 1 square centimeters, and costs 1 dollars.
+	The core count must be greater than 49.
+	Area must be less than 17.
+	The cost is to be less than 2400.													
+													</code>
+												</pre>
+											</div>
+										</div>
+										<div class="col-6 col-12-medium imp-medium">
+											Output
+											<div class="codeBlockHeight300">
+												<pre>
+													<code>
+	a = 2, b = 1, c = 0, d = 5;
+	a = 2, b = 1, c = 1, d = 3;
+	a = 2, b = 1, c = 2, d = 1;
+	a = 2, b = 2, c = 0, d = 1;
+	a = 2, b = 2, c = 0, d = 2;
+	a = 2, b = 2, c = 1, d = 0;
+													</code>
+												</pre>
+											</div>
+										</div>
+									</div>
+								</div>
+							</p>
+							
+							<p>
+								<div class="container">
+									<div class="row">
+										<div class="col-6 col-12-medium">
+											Example 2 Input (procSpec2.txt)
+											<div class="codeBlockHeight300">
+												<pre>
+													<code>
+	Core count is to be in the interval of 48 to 52.
+	The cost must be greater than 2149.
+	Processor type d has 2 cores, uses 1 square centimeters, and costs 1 dollars.
+	Processor type c has 4 cores, uses 2 square centimeters, and costs 10 dollars.
+	Processor type b has 8 cores, uses 3 square centimeters, and costs 100 dollars.
+	Processor type a has 16 cores, uses 4 square centimeters, and costs 1000 dollars.
+	The area must be in the range of 14 to 18.
+													</code>
+												</pre>
+											</div>
+										</div>
+										<div class="col-6 col-12-medium imp-medium">
+											Output
+											<div class="codeBlockHeight300">
+												<pre>
+													<code>
+	d = 0, c = 0, b = 2, a = 2;
+	d = 0, c = 1, b = 0, a = 3;
+	d = 0, c = 1, b = 2, a = 2;
+	d = 1, c = 0, b = 2, a = 2;
+	d = 2, c = 0, b = 0, a = 3;
+	d = 2, c = 0, b = 2, a = 2;
+													</code>
+												</pre>
+											</div>
+										</div>
+									</div>
+								</div>
+							</p>
+
+							<p>
+								<h3>CHALLENGES & SOLUTIONS</h3>
+								As this was one of my first times working with Prolog, the biggest challenge when working on this assignment was learning Prolog and understanding natural language processing.  Many of the challenges I faced as a result of this I solved by reading the Prolog documentation, searching on Google, and experimenting with different ideas to approach the problem.  
+							</p>
+							<p></p>
+
+							<div>
+								Constraint Procedures from “part2.pl”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+		/* Check if given list contain properties of a comparison constraint*/
+		restriction([comparison,A,C,V]) :-
+			atom(A),
+			atom(C),
+			integer(V), V > 0.
+		/* Check if given list contain properties of an interval constraint*/
+		restriction([interval,A,F,M]) :-
+			atom(A),
+			integer(F), F > 0,
+			integer(M), M >= F.
+		
+		/* If a given list contain the properties of a constraint, add new restriction clause to end of the database */
+		appendRestriction([T,A,X,Y]) :-
+			restriction([T,A,X,Y]),
+			assertz(restriction([T,A,X,Y])).
+		
+		/* Gets a list of all constraints */
+		getRestrictions(Constraints) :-
+			findall(X, restriction(X), Constraints).
+		
+		/* Gets a list of all constraints with a specific field */
+		getRestrictions(Constraints,Field) :-
+			findall([X,Field,Y,Z], restriction([X,Field,Y,Z]), Constraints).
+		
+		/* Checks if field and Value follow the given a comparison constraint */
+		checkConstraint([comparison,A,C,V],[A,Value]) :-
+			(C == '=', Value == V);
+			(C == '<', Value < V);
+			(C == '>', Value > V).
+		/* Checks if field and Value follow the given a interval constraint */
+		checkConstraint([interval,A,F,M],[A,Value]) :-
+			F =< Value, Value =< M.
+		
+		/* Check if Field and Value follow the given list of constraints */
+		checkConstraints(Constraints,[_,_]) :-
+			length(Constraints,0).
+		checkConstraints(Constraints,[Field,Value]) :-
+			[H|T] = Constraints,
+			checkConstraint(H, [Field,Value]),
+			checkConstraints(T, [Field,Value]).
+		
+		/* Check Field and Value against all constraints for that field */
+		verifyValue(Field,Value) :-
+			getRestrictions(Constraints,Field),
+			checkConstraints(Constraints,[Field,Value]).
+		
+		/* Verify the given numeric Processor values satisfy the constraints */
+		verifyProcessor([CoreCount,Area,DollarAmt]) :-
+			verifyValue(coreCount,CoreCount),
+			verifyValue(area,Area),
+			verifyValue(cost,DollarAmt).
+										</code>
+									</pre>
+								</div>
+
+								<br>
+								DCG from “part2.pl”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+		/* Grammar for input
+		*
+		* Resulting list is formatted as such:
+		*   - First element = what type of input (definition or constraint)
+		*   - Second to Fifth element = data received from the input (see
+			corresponding input type for more information)
+		*/
+		input([definition,I,C,A,D]) --> definition([I,C,A,D]).
+		input([constraint,C,A,X,Y]) --> constraint([C,A,X,Y]).
+		
+		
+		/* Grammar for definition input
+		*
+		* Resulting list is formatted as such:
+		*   [I,C,A,D]
+		*   - I = ID of processor (atom)
+		*   - C = Number of Cores (integer > 0)
+		*   - A = Area of processor in square centimeters (integer > 0)
+		*   - D = Cost of processor in dollars (integer > 0)
+		*/
+		definition([I,C,A,D]) --> id(I), cores(C), comma, area(A), and, cost(D), period.
+		
+		% ID
+		id(I) --> [processor, type, I], {atom(I)}.
+		% Number of Cores
+		cores(C) --> [has, C, cores], {integer(C), C > 0}.
+		% Area
+		area(A) --> [uses, A, square, centimeters], {integer(A), A > 0}.
+		% Cost
+		cost(D) --> [costs, D, dollars], {integer(D), D > 0}.
+		
+		% Comma, Period, And
+		comma --> [,].
+		period --> [.].
+		and --> comma,[and].
+		
+		
+		/* Grammar for constraint input
+		*
+		* Resulting list is formatted as such:
+		*
+		*   For Comparison Constraints:
+		*     [comparison,A,C,V]
+		*     - comparison : an atom indicating that constraint is a comparison
+		*     - A = Attribute being constrained) : coreCount, area, cost (atom)
+		*     - C = Comparison Type : equal to (=), less than (<), greater
+		*     than (>) (Atom)
+		*     - V = Value attribute is constrained to (integer > 0)
+		*
+		*   For Interval Constraints:
+		*     [interval,A,F,M]
+		*     -interval : an atom indicating that constraint is an interval
+		*     - A = Attribute being constrained) : coreCount, area, cost (atom)
+		*     - F = minimum (inclusive) value for range (integer > 0)
+		*     - M = maximum (inclusive) value for range (integer >= F)
+		*/
+		constraint([comparison,A,C,V]) --> constraintHead(A), comparisonConstraint(C,V), period.
+		constraint([interval,A,F,M]) --> constraintHead(A), intervalConstraint(F,M), period.
+		
+		constraintHead(A) --> attribute(A), imparative, [be].
+		
+		% Attribute
+		attribute(A) -->([the], attributeValue(A)) | attributeValue(A).
+		attributeValue(coreCount) --> [core, count].
+		attributeValue(area) --> [area].
+		attributeValue(cost) --> [cost].
+		
+		% Imparative
+		imparative --> [must] | [is, to].
+		
+		%Comparison Constraint
+		comparisonConstraint(C,V) --> comparison(C), value(V).
+		comparison('=') --> [equal,to].
+		comparison('<') --> [less,than].
+		comparison('>') --> [greater,than].
+		% Value
+		value(V) --> [V], {integer(V), V > 0}.
+		
+		% Interval Constraint
+		intervalConstraint(F,M) --> [in,the],([interval] | [range]),[of], range(F,M).
+		% Range
+		range(F,M) --> value(F), [to], value(M), {M >= F}.
+										</code>
+									</pre>
+								</div>
+							</div>
+
+						</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<section id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-8 col-12-medium">
+						<section class="split contact">
+							<section>
+								<section>
+									<h3>Social Media</h3>
+									<section id="social">
+									<a href="mailto: Bonnecaze.Matthew@gmail.com" class="fa fa-envelope-open"></a>
+									<a href="https://www.linkedin.com/in/bonnem/" class="fab fa-linkedin"></a>
+									<a href="#" class="fab fa-github"></a>
+									</section>
+								</section>
+							</section>
+						</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

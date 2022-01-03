@@ -81,6 +81,162 @@
 								By using a position-based approach to movement, I could not rely on Godot's physics system to handle collisions, so I needed to account for collisions myself so to prevent characters from moving onto a tile that is already occupied by a collidable object or to prevent multiple characters from trying to move onto the same tile.  To address this issue, the player object was given priority over the enemies when moving.  When an enemy moves, it stores a target tile position and references this variable from all other enemies' to determine if this tile will still be available.  The order that the enemies move in is determined by the order that the Godot Engine calls the movement function.
 							</p>
 							<p></p>
+
+							<div>
+								From “Enemy.gd”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	# Returns the direction that the enemy would face and move to mvoe to the player
+	# Takes: None
+	# Modifies: None
+	# Returns: Direction enemy would take if they were to move to player (Vector2)
+	func get_movement_direction_to_player():
+		var direction_to_player = get_direction_to_player()
+		var x = direction_to_player.x
+		var y = direction_to_player.y
+		
+		# Check if the distance to the player along the x-axis is longer than the 
+		# distance along the y-axis
+		# If so, have enemy travel along the x axis
+		# Else, have the movement direction be along the y axis
+		#if(abs(x) > abs(y)): 
+		if(rng.randi_range(0,1) % 2 == 0):
+			return Vector2(x,0).normalized()
+		else: 
+			return Vector2(0,y).normalized()
+
+
+	# Sets the direction that the enemy is facing.  If the enemy has an animation
+	# player rigged, plays the animation that corresponds to the direction the enemy
+	# is facing.  
+	# Requires the animations to be named "Right", "Left", "Front", and "Back"
+	# Takes: A direction for the enemy to face (Vector2)
+	# 		Requires that dir is a normalized Vector2
+	# Modifies: Direction the enemy is facing (facing_direction) and the 
+	# 			animation being played by $AnimationPlayer
+	# Returns: None
+	func set_facing_direction(dir:Vector2):
+		# If so, dir is not a zero vector, set facing_direction to dir
+		if(dir != Vector2.ZERO): 
+			facing_direction = dir
+		var orientation = ""
+		if(facing_direction == Vector2.RIGHT):
+			orientation = "Right"
+		if(facing_direction == Vector2.LEFT):
+			orientation = "Left"
+		if(facing_direction == Vector2.DOWN):
+			orientation = "Front"
+		if(facing_direction == Vector2.UP):
+			orientation = "Back"
+		# If the node AnimationPlayer exits as a child, change the animation
+		# to that corresponding to the enemy's facing direction
+		if($AnimationPlayer != null && orientation != ""):
+			$AnimationPlayer.play(orientation)
+
+
+
+	# Moves the enemy to its target position (target_position)
+	# Takes: delta
+	# Modifies: Enemy's current, previous, and target position 
+	# 			(position, previous_position, target_position, respectively), 
+	# 			the direction the enemy is facing (facing_direction)
+	# Returns: true (if the enemy has reached their target position or if the enemy
+	#			cannot move to their target position and remains at their 
+	#			current position)
+	#		   false (if the enemy has yet to their their target position)
+	func move_to_target(delta): 
+		# Check if the target position is colliding
+		# If so, keep the enemy at their current position and change the direction
+		# that they are facing to a new, random direction
+		space_state = get_world_2d().direct_space_state
+		if(space_state.intersect_ray(position, target_position, [self])):
+			position = previous_position
+			target_position = position
+			move_direction = Vector2.ZERO
+			random_orientation()
+			return true
+		else: 
+			# Move Enemy
+			move_and_slide(move_direction * speed)
+			
+			# Check if enemy moved to at least the target position
+			# If so, set their position to their target position
+			if(position.distance_to(previous_position) >= TILE_SIZE - speed * delta):
+				position = target_position
+				return true
+			else: 
+				return false	
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+
+							<div>
+								From “Hostile_Enemy.gd”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	# If the player is detected by the enemy, move the Enemy towards the player to
+	# be able to attack the player
+	# Takes: delta
+	# Modifies: Enemy's position, target_position, previous_position, 
+	# 			facing_direction
+	# Returns: None
+	func move_enemy (delta):
+		# Check if enemy is facing an object
+		if(is_player_in_fov()):
+			# If player is in attack area
+			var raw_dir_to_player = get_direction_to_player()
+			var abs_raw_dir_to_player = Vector2(abs(raw_dir_to_player.x), 
+									abs(raw_dir_to_player.y))
+			var dist_to_player = get_distance_to_player() / TILE_SIZE
+			
+			# If the player is on the same column or row of tiles and are 
+			if((abs_raw_dir_to_player == Vector2(1,0) || 
+				abs_raw_dir_to_player == Vector2(0,1)) && 
+				dist_to_player <= attack_area_distance): 
+				# Rotate the enemy to face the placer
+				set_facing_direction(raw_dir_to_player)
+				update_attack_area()
+
+				# If the player is between the enemy & attack area, move 
+				# the enemy back one tile
+				if(dist_to_player < attack_area_distance):
+					set_move_direction(raw_dir_to_player * -1)
+					update_attack_area()
+					move_to_target(delta)
+			else: 
+			# Else, the enemy needs to move to the player
+				var dir_to_palyer = get_movement_direction_to_player()
+				set_move_direction(dir_to_palyer)
+				# Update the position of the attack area collider
+				update_attack_area()
+				move_to_target(delta)
+
+
+	# Update the Attacking Area (Attack_Area's CollisionShape2D) to be positioned
+	# relative to the enemy is facing
+	# Takes: None
+	# Modifies: Attack_Area's CollisionShape2D (position and rotation_degrees)
+	# Returns: None
+	func update_attack_area(): 
+		$Attack_Area/CollisionShape2D.position = facing_direction * TILE_SIZE * 
+	attack_area_distance
+		if(facing_direction == Vector2.LEFT || facing_direction == Vector2.RIGHT):
+			$Attack_Area/CollisionShape2D.rotation_degrees = 90.0
+		else:
+			$Attack_Area/CollisionShape2D.rotation_degrees = 0.0
+										</code>
+									</pre>
+								</div>
+							</div>
+
+
 						</section>
 
 					</div>

@@ -2596,5 +2596,25 @@ header.major .date:before, header.major .date:after {
 #name {
 	vertical-align: middle;
 }
+  
+.codeBlock {
+	height: 500px;
+	max-width: 100%;
+	resize: both;
+	overflow: auto;
+	font-family: Consolas,"courier new";
+	color: crimson;
+	background-color: #f1f1f1;
+	font-size: 75%;
+}
 
-
+.codeBlockHeight300 {
+	height: 300px;
+	max-width: 100%;
+	resize: both;
+	overflow: auto;
+	font-family: Consolas,"courier new";
+	color: crimson;
+	background-color: #f1f1f1;
+	font-size: 60%;
+}
