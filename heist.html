@@ -81,6 +81,434 @@
 								While not my area of expertise, also I worked on the sound design for <i>Heist</i>.  As I was unfamiliar with sound design, I learned how to use Ableton Live 11 to compose the music and Audacity to record and modify the sound effects.  
 							</p>
 							<p></p>
+
+							<div>
+								"EnemyScan.cs" (Used by Security Cameras and Collectable Artifacts)
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	using System.Collections;
+	using System.Collections.Generic;
+	using UnityEngine;
+	
+	public class EnemyScan : MonoBehaviour
+	{
+		[SerializeField] float speed = 3;
+		[SerializeField] bool unwindPath = false;
+		[SerializeField] List<Vector3> rotations;
+		int pointInPath = 0;
+	
+	
+		/*
+			* When called, rotates the game object this script is attetched to the next rotation point
+			* in "path"
+			* 
+			* Input:    none
+			* Output:   none
+			* Modifies: pointInPath (to next "point" in path when rotation is completed)
+			*           rotations (reversed if unwindPath is true and end of path has been reached)
+			*           Rotation of attatching Game Object
+		*/
+		public void Pivot()
+		{
+			// Check if there are no points in path to rotate towards
+			if (rotations.Count < 1)
+				return;
+			
+			Quaternion newRotation = Quaternion.identity;
+			Vector3 targetDirection = rotations[pointInPath];
+	
+			newRotation = Quaternion.Euler(targetDirection);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, speed * Time.deltaTime);
+	
+			// Check if the current rotation is within a certain angle from the target rotation angle
+			// If so, update the pointInPath to the next point in the path
+			if (Mathf.Abs(Quaternion.Angle(transform.rotation, newRotation)) < 0.001f)
+			{
+				pointInPath++;
+				pointInPath %= rotations.Count;
+	
+				// If the Enemy is supposed to follow the path in reverse, reverse the list
+				if (pointInPath == 0 && unwindPath)
+				{
+					rotations.Reverse();
+				}
+			}
+		}
+	}
+											
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+
+							<div>
+								"EnemyPatrol.cs" (Used by Secuirty Guards)
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	using System.Collections;
+	using System.Collections.Generic;
+	using UnityEngine;
+	using UnityEngine.AI;
+	
+	public class EnemyPatrol : MonoBehaviour
+	{
+		[SerializeField] float rotationSpeed = 50;
+		[SerializeField] bool setInitialPositionAsStart = true;
+		[SerializeField] bool unwindPath = false;
+		[SerializeField] List<Transform> path;
+	
+		[SerializeField] private float lookTime;
+		private float timer;
+		private bool allowRotate;
+	
+		[SerializeField] private Animator animator;
+		int pointInPath = 0;
+	
+		NavMeshAgent agent;
+	
+	
+		private void Awake()
+		{
+			// Check if the enemy's current position should be adde as the 
+			// initial position in the patrol path
+			if (setInitialPositionAsStart)
+			{
+				// Add the Enemy's current position
+				GameObject point = new GameObject();
+				point.transform.position = transform.position;
+				path.Insert(0, point.transform);
+			}
+			
+		}
+	
+		// Start is called before the first frame update
+		void Start()
+		{
+			agent = GetComponent<NavMeshAgent>();
+		}
+	
+		// Update is called once per frame
+		void Update()
+		{
+			NavMeshPatrol();
+		}
+	
+	
+		private void NavMeshPatrol()
+		{
+			// Checks if the agent is stopped (not moving)
+			// If so, rotate the agent to the next point in their path
+			if (agent.isStopped == true)
+			{
+				// 
+				if (timer <= lookTime && !allowRotate)
+				{
+					timer += Time.deltaTime;
+					return;
+				}
+				timer = 0;
+				allowRotate = true;
+				RotateToNextPoint();
+			}
+			else
+			{
+				// If the agent does not have a path and the remaining distance 
+				// to the desitnation is less than a certain minimum, get the set point
+				// in the path
+				if (!agent.pathPending && agent.remainingDistance < 0.001f)
+				{
+					MoveToNextPoint();
+					agent.isStopped = true;
+					allowRotate = false;
+					animator.SetBool("Walking", false);
+				}
+			}
+		}
+	
+		/*
+			* Sets destination point to the next point in the path
+			* If the last point in the path has been reached, either
+			* switches to the first point in the path or reverses the path
+			* depending on unwindPath, the latter occuring if unwindPath is true.
+			* 
+			* Input:    none
+			* Output:   none
+			* Modifies: pointInPath
+		*/
+		private void MoveToNextPoint()
+		{
+			// Returns if no points have been set up
+			if (path.Count == 0)
+				return;
+	
+	
+			// Choose the next point in the array as the destination,
+			// cycling to the start if necessary.
+			pointInPath++;
+			pointInPath %= path.Count;
+	
+			// If the Enemy is supposed to follow the path in reverse, reverse the list
+			if (pointInPath == 0 && unwindPath)
+			{
+				path.Reverse();
+			}
+	
+			// Set the agent to go to the currently selected destination.
+			agent.destination = path[pointInPath].position;
+		}
+	
+	
+		/*
+			* Rotates the enemy to the next point in their path
+			* Input:    none
+			* Output:   none
+			* Modifies: Rotation of the applied game object
+		*/
+		private void RotateToNextPoint()
+		{
+			// Get the direction between the two objects
+			Vector3 targetDirection = path[pointInPath].position - transform.position;
+			targetDirection.y = 0;  //This allows the object to only rotate on its y axis
+			// Check that direction is not a zero vector
+			if (targetDirection.x != 0 && targetDirection.z != 0)
+			{
+				// Rotate towards target direction
+				Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+				transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+				// If the angle between current rotation and target rotation is less than a certain minimum, 
+				// complete rotation
+				if (Quaternion.Angle(transform.rotation, targetRotation) < 0.001f)
+				{
+					agent.isStopped = false;
+					animator.SetBool("Walking", true);
+				}
+			}
+			else
+			{
+				// Due to target rotation being a zero vector, complete rotation
+				agent.isStopped = false;
+				animator.SetBool("Walking", true);
+			}
+		}
+	}											
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+
+							<div>
+								"SecurityTerminal.cs" (Used by Security Terminal)
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	using System.Collections;
+	using System.Collections.Generic;
+	using UnityEngine;
+	
+	public class SecurityTerminal : MonoBehaviour
+	{
+		SecurityCamera[] securityCameras;
+		[SerializeField] bool isEnabled = true;
+		[SerializeField] float restartTime = 10;
+		[SerializeField] float timeRemaining = 10;
+		bool wasDisabled = false;
+	
+	
+		// Start is called before the first frame update
+		void Start()
+		{
+			// Stores all of the SecurityCamera components in the scene
+			securityCameras = FindObjectsOfType(typeof(SecurityCamera)) as SecurityCamera[];
+			timeRemaining = restartTime;
+		}
+	
+		// Update is called once per frame
+		void Update()
+		{
+			// Checks if the security system is disabled
+			// and has not already been disabled
+			if (!isEnabled && !wasDisabled)
+			{
+				Deactivate();
+				// Checks if the counter has finished counting down
+				// If the time is still running, decreate the remaining time
+				if (timeRemaining > 0)
+				{
+					timeRemaining -= Time.deltaTime;
+				}
+				// If the timer has reached 0, reactivate the security
+				// system
+				else
+				{
+					Activate();
+					timeRemaining = restartTime;
+					wasDisabled = true;
+				}
+			}
+		}
+	
+	
+		/*
+			* Returns if the security system is enabled
+			* Input:    none
+			* Output:   bool
+			* Modifies: none
+		*/
+		public bool isSecuritySystemEnabled()
+		{
+			return isEnabled;
+		}
+	
+	
+		/*
+			* Disables the security System
+			* Input:    none
+			* Output:   none
+			* Modifies: sets isEnabled to false;
+			*           Deactivates all security cameras
+			*              in the scene
+		*/
+		public void Deactivate()
+		{
+			if (!wasDisabled)
+			{
+				wasDisabled = true;
+				Toggle(false);
+			}
+		}
+	
+		/*
+			* Activates the security System
+			* Input:    none
+			* Output:   none
+			* Modifies: sets isEnabled to true;
+			*           Activates all security cameras
+			*              in the scene
+		*/
+		public void Activate()
+		{
+			Toggle(true);
+		}
+	
+		/*
+			* Activates or deactivates the security system
+			* Input:    bool (state)
+			* Output:   none
+			* Modifies: sets isEnabled to the given state;
+			*           If the given state is true, activates
+			*              the security system;
+			*           If the given state is fals,e deactivates
+			*              the security system
+		*/
+		private void Toggle(bool state)
+		{
+			isEnabled = state;
+	
+			foreach (SecurityCamera securityCamComponent in securityCameras)
+			{
+				// Checks if the security camera is not null
+				if (securityCamComponent != null)
+				{
+					// Checks if the security camera should be activated (true)
+					// or deactivated (false)
+					if (state)
+					{
+						securityCamComponent.EnableCamera();
+					}
+					else
+					{
+						securityCamComponent.DisableCamera();
+					}
+				}
+			}
+		}
+	}											
+										</code>
+									</pre>
+								</div>
+							</div>
+							<br>
+							<div class="container">
+								<div class="row">
+									<div class="col-6 col-12-medium">
+										<p>
+											Title Screen and Game Over Theme
+											<br>
+											<audio controls>
+												<source src="audio/heist/music/GA2_Start_End_v2.wav" type="audio/wav">
+												Your browser does not support the audio element.
+											</audio>
+										</p>
+									</div>
+									<div class="col-6 col-12-medium imp-medium">
+										<p>
+											Main Theme
+											<br>
+											<audio controls>
+												<source src="audio/heist/music/group_assignment_2_sample_3.wav" type="audio/wav">
+												Your browser does not support the audio element.
+											</audio>
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="container">
+								<div class="row">
+									<div class="col-6 col-12-medium">
+										<p>
+											Bag Item Sound Effect
+											<br>
+											<audio controls>
+												<source src="audio/heist/sfx/bagging.wav" type="audio/wav">
+												Your browser does not support the audio element.
+											</audio>
+										</p>
+									</div>
+									<div class="col-6 col-12-medium imp-medium">
+										<p>
+											Walking Sound Effect
+											<br>
+											<audio controls>
+												<source src="audio/heist/sfx/stepping_2.wav" type="audio/wav">
+												Your browser does not support the audio element.
+											</audio>
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="container">
+								<div class="row">
+									<div class="col-6 col-12-medium">
+										<p>
+											Security System Re-Enabled Sound Effect
+											<br>
+											<audio controls>
+												<source src="audio/heist/sfx/security_click.wav" type="audio/wav">
+												Your browser does not support the audio element.
+											</audio>
+										</p>
+									</div>
+									<div class="col-6 col-12-medium imp-medium">
+										<p>
+											Siren Sound Effect
+											<br>
+											<audio controls>
+												<source src="audio/heist/sfx/siren.wav" type="audio/wav">
+												Your browser does not support the audio element.
+											</audio>
+										</p>
+									</div>
+								</div>
+							</div>
 						</section>
 
 					</div>
