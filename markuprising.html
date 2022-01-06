@@ -82,21 +82,79 @@
 								When implementing the dialogue, I needed a way to record that an item was added into the player’s inventory or that an event had occurred, both of which needed to be accessible across multiple objects and levels.  To store this information, I created a custom Game Instance that had dedicated maps for event triggers and the inventory, the latter of which was populated by the keys in the inventory data table.  To set the value of an event or the inventory, I then created tasks to set the value of a given key in these maps.  To check if an event has occurred or if an item was added into the inventory, I also created a decorators that checks if the value in a given key in one of these maps matches a given value.  
 							</p>
 							<p></p>
+
 							<div class="container">
-								<div>
-									From “Hostile_Enemy.gd”
-									<br>
-									<img class="imgContent" src="images/mark_uprising/Decorator_CheckSwitchEvent.png" alt="" />										
+								<h3>Sample Dialogue Trees</h3>
+								Example Dialogue Tree
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="dialogueTreeImg" src="images/mark_uprising/SampleDialogueTree.png" onclick="openModal('myModal','dialogueTreeImg','img01','modal-caption')" alt="Example Dialogue Tree">
 								</div>
-							</div>
 							<br>
-							<div class="container">
-								<div>
-									From “Hostile_Enemy.gd”
-									<br>
-									<img class="imgContent" src="images/mark_uprising/Decorator_CheckSwitchEvent.png" alt="" />										
+								Example Interrogation Dialogue Tree
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="dialogueTreeImg2" src="images/mark_uprising/SampleDialogueTree_Interrogation.png" onclick="openModal('myModal','dialogueTreeImg2','img01','modal-caption')" alt="Example Interrogation Dialogue Tree.">
 								</div>
 							</div>
+
+							<br>
+
+							<div class="container">
+								<h3>Inventory Items</h3>
+								Item Structure
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="itemStructure" src="images/mark_uprising/InventoryStructure.png" onclick="openModal('myModal','itemStructure','img01','modal-caption')" alt="Structure laying out attributes for of an item">
+								</div>
+							<br>
+								Item Table
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="itemTable" src="images/mark_uprising/InventoryTable.png" onclick="openModal('myModal','itemTable','img01','modal-caption')" alt="Table containing the data for collectable Items">
+								</div>
+							</div>
+
+							<br>
+
+							<div class="container">
+								<h3>Events</h3>
+								Example Map in Game Instance to Track if an Event was Triggered
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="eventGameInstance" src="images/mark_uprising/GameInstance_SwitchEventMap.png" onclick="openModal('myModal','eventGameInstance','img01','modal-caption')" alt="Example Map in Game Instance to Track if an Event was Triggered">
+								</div>
+							<br>
+								Dialogue Tree Task to Set an Event's Value
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="eventTask" src="images/mark_uprising/Task_SetSwitchEvent.png" onclick="openModal('myModal','eventTask','img01','modal-caption')" alt="Dialogue Tree Task to Set an Event's Value">
+								</div>
+							<br>
+								Dialogue Tree Decorator to Check an Event's Value
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="eventDecorator" src="images/mark_uprising/Decorator_CheckSwitchEvent.png" onclick="openModal('myModal','eventDecorator','img01','modal-caption')" alt="Dialogue Tree Decorator to Check an Event's Value">
+								</div>
+							</div>
+
+							<br>
+
+							<div class="container">
+								<h3>Inventory</h3>
+								Dialogue Tree Task to Display the Inventory
+								<br>
+								<div class="codeBlockHeight300">
+									<img class="modalableImg" id="inventory" src="images/mark_uprising/Task_DisplayInventory_EventGraph.png" onclick="openModal('myModal','inventory','img01','modal-caption')" alt="Dialogue Tree Task to Display the Inventory">
+								</div>
+							<br>
+								Helper Function used to Create the Inventory Widget
+								<br>
+								<div class="codeBlock">
+									<img class="modalableImg" id="inventory2" src="images/mark_uprising/Task_DisplayInventory_PrepareInventory.png" onclick="openModal('myModal','inventory2','img01','modal-caption')" alt="Helper Function used to Create the Inventory Widget">
+								</div>
+							</div>
+
 						</section>
 
 					</div>
@@ -133,6 +191,15 @@
 		<script src="assets/js/breakpoints.min.js"></script>
 		<script src="assets/js/util.js"></script>
 		<script src="assets/js/main.js"></script>
+		<script src="assets/js/modal.js"></script>
+
+		
+		<!-- Modal -->
+		<div class="modal" id="myModal" >
+			<span class="modalClose" onclick="closeModal('myModal')">&times;</span>
+			<img class="modal-content" id="img01">
+			<div id="modal-caption"></div>
+		</div>
 
 </body>
 
