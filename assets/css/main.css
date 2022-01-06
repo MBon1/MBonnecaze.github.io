@@ -2618,3 +2618,15 @@ header.major .date:before, header.major .date:after {
 	background-color: #f1f1f1;
 	font-size: 60%;
 }
+
+.imgBlock {
+	height: 400px;
+	width: 100%;
+	resize: vertical;
+	overflow: auto;
+}
+
+.imgContent {
+	height: auto;
+	max-width: 100%;
+}
