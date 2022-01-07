@@ -52,7 +52,8 @@
 						<div class="col-6 col-12-medium">
 
 							<!-- Banner Copy -->
-							<p>What the portfolio is about goes here.</p>
+							<br>
+							<p>Below is a collection of games and programs that I wrote during my time at Rensselaer Polytechnic Institute. </p>
 						</div>
 						<div class="col-6 col-12-medium imp-medium">
 
@@ -61,7 +62,7 @@
 							<!-- 
 								<a href="#" class="bordered-feature-image"><img src="images/monk2.mov" alt="" /></a>
 							 -->
-							<video controls muted width="600" height="400" name="Broken Cord">
+							<video id="indexVideo" controls width="600" height="400" name="Broken Cord">
 								<source src="videos/BrokenCord.mp4">
 							</video>							<!--
 									<video width="600" controls autoplay>
@@ -82,12 +83,13 @@
 
 						<!-- Feature #1 -->
 						<section>
-							<a href="brokencord.html" class="bordered-feature-image"><img src="images/pic01.jpg" alt="" /></a>
-							<h2>Broken Cord</h2>
+							<a href="markuprising.html" class="bordered-feature-image"><img src="images/pic01.jpg" alt="" /></a>
+							<h2>Mark: Uprising</h2>
 							<p>
-								what skill are you showing in this project
+								Unreal
 							</p>
 						</section>
+						
 
 					</div>
 					<div class="col-3 col-6-medium col-12-small">
@@ -97,7 +99,7 @@
 							<a href="heist.html" class="bordered-feature-image"><img src="images/pic01.jpg" alt="" /></a>
 							<h2>Heist</h2>
 							<p>
-								what skill are you showing in this project
+								Unity
 							</p>
 						</section>
 
@@ -106,10 +108,10 @@
 
 						<!-- Feature #3 -->
 						<section>
-							<a href="markuprising.html" class="bordered-feature-image"><img src="images/pic01.jpg" alt="" /></a>
-							<h2>Mark: Uprising</h2>
+							<a href="brokencord.html" class="bordered-feature-image"><img src="images/pic01.jpg" alt="" /></a>
+							<h2>Broken Cord</h2>
 							<p>
-								what skill are you showing in this project
+								Godot
 							</p>
 						</section>
 
@@ -119,9 +121,9 @@
 						<!-- Feature #4 -->
 						<section>
 							<a href="pa3.html" class="bordered-feature-image"><img src="images/pic04.jpg" alt="" /></a>
-							<h2>Programming Languages Project 3</h2>
+							<h2>Natural Language Processing</h2>
 							<p>
-								what skill are you showing in this project
+								Prolog and Definite Clause Grammar
 							</p>
 						</section>
 
@@ -130,11 +132,10 @@
 				
 
 				<!-- UNUSED ROW -->
-				<br>
+				<!-- <br>
 				<div class="row">
 					<div class="col-3 col-6-medium col-12-small">
-
-						<!-- Feature #1 -->
+					
 						<section>
 							<a href="#" class="bordered-feature-image"><img src="images/cs1image.jpg" alt="" /></a>
 							<h2>CS Sample</h2>
@@ -146,7 +147,6 @@
 					</div>
 					<div class="col-3 col-6-medium col-12-small">
 
-						<!-- Feature #2 -->
 						<section>
 							<a href="#" class="bordered-feature-image"><img src="images/pic02.jpg" alt="" /></a>
 							<h2>CS Sample</h2>
@@ -158,7 +158,6 @@
 					</div>
 					<div class="col-3 col-6-medium col-12-small">
 
-						<!-- Feature #3 -->
 						<section>
 							<a href="#" class="bordered-feature-image"><img src="images/pic03.jpg" alt="" /></a>
 							<h2>Other Samples</h2>
@@ -170,7 +169,6 @@
 					</div>
 					<div class="col-3 col-6-medium col-12-small">
 
-						<!-- Feature #4 -->
 						<section>
 							<a href="#" class="bordered-feature-image"><img src="images/pic04.jpg" alt="" /></a>
 							<h2>Other Samples</h2>
@@ -180,7 +178,7 @@
 						</section>
 
 					</div>
-				</div>
+				</div> -->
 
 
 			</div>
@@ -224,6 +222,13 @@
 	<script src="assets/js/breakpoints.min.js"></script>
 	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
+	<script src="assets/js/randomizeSrc.js"></script>
+
+	<script type="text/javascript">
+		window.onload = function () {
+			randomizeSrc("indexVideo", ["videos/BrokenCord.mp4", "videos/Heist.mp4", "videos/MarkUprisingP2.mp4"])
+		};
+	</script>
 
 </body>
 
