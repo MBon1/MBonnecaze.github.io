@@ -1,0 +1,509 @@
+<!DOCTYPE HTML>
+<!--
+	Halcyonic by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Veni Vidi Vici</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+</head>
+
+<body class="subpage">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Logo -->
+<!-- 						
+						<h1><a href="index.html" id="logo">Matthew Bonnecaze</a></h1>
+ -->
+						<a href="index.html" id="logo">
+							<img src="images/Matthew2.png"></a>
+						</a>
+
+						<!-- Nav -->
+						<nav id="nav">
+							<a href="index.html">Home</a>
+							<a href="https://www.linkedin.com/in/bonnem/" class="icon brands fab fa-linkedin"></a>
+							<!-- <a href="#" class="icon brands fab fa-github"></a> -->
+						</nav>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Content -->
+		<section id="content">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Main Content -->
+						<section>
+							<header>
+								<h2>Veni Vidi Vici (In Development)</h2>
+								<h3>Methodology: Agile</h3>
+								<h3>Engine: Unity</h3>
+								<h3>Role: Programmer</h3>
+							</header>
+							<p>
+								<i>Veni Vidi Vici</i> is a dungeon crawler with rhythm and monster collecting elements made using the Unity Engine.  In <i>Veni Vidi Vici</i>, the player takes control of the former warlord Delphine as she explores the ruins of the civilization she destroyed to restore her lost memory and find redemption.  Through dances, she is capable of purifying and befriending the dungeon's various creatures, who in turn grant her additional dances for combat and skills for exploring the dungeon.  
+							</p>
+							<div >
+							<div class="container">
+								<div class="row">
+									<div class="col-6 col-12-medium">
+										<p>
+											<h3>DEMO</h3>
+											In the development of <i>Veni Vidi Vici</i>, my main focuses include the data management system, the party and inventory systems, the interactables found in the dungeon, and the UIs.  
+										</p>
+									</div>
+									<div class="col-6 col-12-medium imp-medium">
+										<video controls width="95%" height="auto" name="Broken Cord">
+											<source src="videos/Veni Vidi Vici Game Play Trailer.mp4">
+										</video>
+									</div>
+								</div>
+							</div>
+							<p>
+								<h3>CHALLENGES & SOLUTIONS</h3>
+								One of the challenges faced while developing <i>Veni Vidi Vici</i> was how to preserve critical information such as the player's party or inventory between scenes and play sessions, leading to my decisions to have this information be stored in a JSON file.  Storing this information into JSON files also assists in debugging as the changes to the files' contents can be validated even if the game crashes.  
+							</p>
+
+							<div>
+								“DataParser.cs”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	using System.IO;
+	using UnityEngine;
+	
+	using JObject = Newtonsoft.Json.Linq.JObject;
+	using JConvert = Newtonsoft.Json.JsonConvert;
+	
+	public class DataParser
+	{
+		/* Given a JObject and a path, checks if the given JObject is initialized.
+		 * If not, Parse from path.  If so, does nothing.  
+		 * If the path does not exist, directory is created.
+		 * 
+		 *    Takes: ref JObject    (stores JSON data - must be passed by ref)
+		 *           string         (path to JSON file)
+		 * Modifies: jobj           (if jobj is null)
+		 *  Returns: NONE
+		 *  Expects: JOBJ jobj must be passed by reference
+		 */
+		public static void InitializeJObject(ref JObject jobj, string path)
+		{
+			path = FormatPath(path);
+	
+			// Checks if jobj needs to be initialized and that path leads to a valid file
+			if (jobj == null)
+			{
+				Debug.Log("Directory will be in folder: " + path);
+				if (!Directory.Exists(path))
+				{
+					Directory.CreateDirectory(RemoveJSONFileNameFromPath(path));
+				}
+				if (!File.Exists(path))
+				{
+					File.WriteAllText(path, "");
+				}
+	
+				try
+				{
+					jobj = JObject.Parse(File.ReadAllText(path));
+				}
+				catch
+				{
+					jobj = new JObject();
+				}
+			}
+		}
+	
+		/* Given a JObject, de-serializes the data into a new instance of generic T.
+		 * Returns default of T if jobj is null.
+		 * 
+		 *    Takes: JObject    (contains JSON data)
+		 * Modifies: NONE
+		 *  Returns: T
+		 *  Expects: NONE
+		 *  
+		 *     Note: Data in jobj should ideally be able to be stored in T
+		 */
+		public static T Load &ltT&gt (JObject jobj)
+			where T : new()
+		{
+			// Checks if jobj is null
+			if (jobj == null)
+			{
+				return new T();
+			}
+			return jobj.ToObject &ltT&gt ();
+		}
+	
+	
+		/* Given a JObject, de-serializes the data of element (in JObject) 
+		 * into a new instance of generic T.
+		 * Returns default of T if jobj is null or element is not in jobj.
+		 * 
+		 *    Takes: JObject    (contains JSON data)
+		 *           string     (element in jobj to get data from)
+		 * Modifies: NONE
+		 *  Returns: T
+		 *  Expects: NONE
+		 *  
+		 *     Note: Data in jobj should ideally be able to be stored in T
+		 *           and jobj should contain element
+		 */
+		public static T Load &ltT&gt (JObject jobj, string element)
+			where T : new()
+		{
+			// Checks if jobj is null and if element is not within jobj
+			if (jobj == null || !Contains(jobj, element))
+			{
+				return new T();
+			}
+			return jobj[element].ToObject &ltT&gt ();
+		}
+	
+		/* Given a generic object t and a path to a JSON file (which may or
+		 * may not exist), serialize t and store into JSON at path.
+		 * 
+		 *    Takes: T          (Object to Serialize)
+		 *           string     (Path to a JSON file to store t into)
+		 * Modifies: Overwrites data in JSON file (path) if path exists.
+		 *  Returns: NONE
+		 *  Expects: NONE
+		 */
+		public static void StoreData &ltT&gt (T t, string path)
+		{
+			path = FormatPath(path);
+	
+			File.WriteAllText(path, JConvert.SerializeObject(t));
+		}
+	
+		/* Checks if an element is present exists in the given JObject.
+		 * If so, returns true.  False elsewise.  
+		 * 
+		 *    Takes: JObject    (JObject to check)
+		 *           string     (element we want to find in jobj)
+		 * Modifies: NONE
+		 *  Returns: bool
+		 *  Expects: NONE
+		 */
+		public static bool Contains(JObject jobj, string element)
+		{
+			return jobj.ContainsKey(element);
+		}
+	
+	
+		/* Formats the given path to be a persistent data path, which 
+		 * will be readable/writable after build.  
+		 * 
+		 *    Takes: string     (path to format)
+		 * Modifies: NONE
+		 *  Returns: string
+		 *  Expects: NONE
+		 */
+		private static string FormatPath(string path)
+		{
+			return Application.persistentDataPath + path;
+		}
+	
+		/* Given the given path to a file, resturns the path to the
+		 * file where the file is stored in. 
+		 * 
+		 *    Takes: string     (path of file)
+		 * Modifies: NONE
+		 *  Returns: string
+		 *  Expects: NONE
+		 */
+		private static string RemoveJSONFileNameFromPath(string path)
+		{
+			return Path.GetDirectoryName(path);
+		}
+	}											
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+							<p>
+								<br>
+								In <i>Veni Vidi Vici</i>, the player will encounter trees that they can topple over and raise back up.  When toppled over, these trees can be used as a bridge, allowing for the player to cross over pits and hazardous areas that they previously would not have been able to.  This requires that the collider types of each tile the toppled tree falls on to be recorded so that the tiles' collision can be restored when the tree is raised.  As a toppled tree can have other trees topple on top of it, though, before a toppled tree can be raised, it needs to check first that no other trees are on top of it.  To handle this, I have a static dictionary that uses Vector3Int as the keys (representing the tiles) and a stack of GameObjects as the values (representing all of the toppled trees that are on that tile and the order they fell on to that tile).  
+							</p>
+							<div>
+								Alter Tile Collision Code From NewToppleable.cs”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	/* Records the tile collision data for each cell in cells corresponding all tilemaps in tilemaps.
+	* If the tile's data has yet to be documented, it records the the tile collisiondata
+	* and the tilemap which the tile comes from.  Afterwards, the tile's collision is set
+	* to None.
+	* If the tile's data has already been documented, the tile is skipped.
+	* 
+	*    Takes: List &ltVector3Int&gt   (cells to record)
+	* Modifies: tileCollisionDatabase
+	*  Returns: NONE
+	*  Expects: tilemaps as well as all its contents are set
+	*/
+	private void RecordTiles(List &ltVector3Int&gt cells)
+	{
+		foreach (Vector3Int cell in cells)
+		{
+			// Checks if tileCollisionDatabase does not contain data for this cell
+			if (!tileCollisionDatabase.ContainsKey(cell))
+			{
+				CellData data = new CellData();
+				foreach (Tilemap tilemap in tilemaps)
+				{
+					Tile.ColliderType colliderType = tilemap.GetColliderType(cell);
+					data.CollisionData.Add(tilemap, colliderType);
+					tilemap.SetColliderType(cell, Tile.ColliderType.None);
+				}
+				tileCollisionDatabase.Add(cell, data);
+			}
+			else
+			{
+				tileCollisionDatabase[cell].IncrementToppleableCount();
+			}
+		}
+	}
+
+	/* Alters tile collision data for tile located at each entry for cells.
+	* If record is true, tile collision will be recorded.  
+	* Else, tile collision will be restored (if no other toppleable occupies that cell).
+	* 
+	*    Takes: bool               (true == record mode, false == restore mode)
+	*           List &ltVector3Int&gt   (cells)
+	* Modifies: tileCollisionDatabase
+	*  Returns: NONE
+	*  Expects: tilemaps as well as all its contents are set
+	*/
+	private void AlterTiles(bool record, List &ltVector3Int&gt cells)
+	{
+		// Check if in record or restore mode
+		if (record)
+			RecordTiles(cells);
+		else
+			RestoreTiles(cells);
+	}
+
+	/* Goes through each cell in cells.  If cell is in tileCollisionDatabase, decrements
+	* the number of toppleables on cell.  If there are no more toppleables on cell, 
+	* restore the collision data of that cell on each tilemap and remove 
+	* the entry for cell from tileCollisionDatabase.
+	* 
+	*    Takes: List &ltVector3Int&gt   (cells)
+	* Modifies: tileCollisionDatabase
+	*  Returns: NONE
+	*  Expects: tilemaps as well as all its contents are set
+	*/
+	private void RestoreTiles(List &ltVector3Int&gt cells)
+	{
+		foreach (Vector3Int cell in cells)
+		{
+			// Checks if tileCollisionDatabase does not contain data for this cell
+			if (tileCollisionDatabase.ContainsKey(cell))
+			{
+				tileCollisionDatabase[cell].DecrementToppleableCount();
+				if(tileCollisionDatabase[cell].ToppleableCount == 0)
+				{
+					foreach (Tilemap tilemap in tileCollisionDatabase[cell].CollisionData.Keys)
+					{
+						tilemap.SetColliderType(cell, tileCollisionDatabase[cell].CollisionData[tilemap]);
+					}
+					tileCollisionDatabase.Remove(cell);
+				}
+			}
+		}
+	}
+
+
+	/* 
+	* CELL DATA CLASS
+	*/
+	private class CellData
+	{
+		public uint ToppleableCount { get; private set; }
+		public Dictionary &ltTilemap, Tile.ColliderType&gt CollisionData { get; set; }
+
+		/* Constructs a CellData object
+		* 
+		*    Takes: NONE
+		* Modifies: this
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public CellData()
+		{
+			ToppleableCount = 1;
+			CollisionData = new Dictionary &ltTilemap, Tile.ColliderType&gt();
+		}
+
+		/* Increments ToppleableCount by 1.
+		* 
+		*    Takes: NONE
+		* Modifies: ToppleableCount
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public void IncrementToppleableCount()
+		{
+			ToppleableCount++;
+		}
+
+		/* Decrements ToppleableCount by 1.
+		* 
+		*    Takes: NONE
+		* Modifies: ToppleableCount
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public void DecrementToppleableCount()
+		{
+			ToppleableCount--;
+		}
+	}
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+
+							<div>
+								Toppled Tree Stack Code From NewToppleable.cs”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	/* Adds this toppleable to all cells it covers in the topple stack.  
+	* Does not add this object to the stack if it already is on there.
+	* 
+	*    Takes: List &ltVector3Int&gt   (cells toppleable is on)
+	* Modifies: toppleStack
+	*  Returns: NONE
+	*  Expects: NONE
+	*/
+	private void AddToToppleStack(List &ltVector3Int&gt cells)
+	{
+		if (!HasToppled() || (toppleStack.ContainsKey(cell) && toppleStack[cell].Contains(this.gameObject)))
+		{
+			return;
+		}
+		foreach (Vector3Int cell in cells)
+		{
+			if (!toppleStack.ContainsKey(cell))
+			{
+				toppleStack.Add(cell, new Stack &ltGameObject&gt ());
+			}
+			toppleStack[cell].Push(this.gameObject);
+		}
+		addedToStack = true;
+	}
+
+	/* Checks if this toppleable has another toppleable ontop of it.
+	* 
+	*    Takes: List &ltVector3Int&gt   (cells toppleable is on)
+	* Modifies: toppleStack
+	*  Returns: NONE
+	*  Expects: NONE
+	*/
+	private bool CanRaise(List &ltVector3Int&gt cells)
+	{
+		foreach(Vector3Int cell in cells)
+		{
+			if (!toppleStack.ContainsKey(cell) || !toppleStack[cell].Contains(this.gameObject) || !toppleStack[cell].Peek().Equals(this.gameObject))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* If the toppleable can be raised, removes toppleable from topple stack.
+	* 
+	*    Takes: List &ltVector3Int&gt   (cells toppleable is on)
+	* Modifies: toppleStack
+	*  Returns: NONE
+	*  Expects: NONE
+	*/
+	public void RemoveFromToppleStack(List &ltVector3Int&gt cells)
+	{
+		if (!CanRaise(cells))
+			return;
+
+		foreach (Vector3Int cell in cells)
+		{
+			if (toppleStack.ContainsKey(cell) && toppleStack[cell].Peek().Equals(this.gameObject))
+			{
+				toppleStack[cell].Pop();
+				if (toppleStack[cell].Count == 0)
+				{
+					toppleStack.Remove(cell);
+				}
+			}
+		}
+	}
+										</code>
+									</pre>
+								</div>
+							</div>
+
+
+						</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<section id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-8 col-12-medium">
+						<section class="split contact">
+							<section>
+								<section>
+									<h3>Social Media</h3>
+									<section id="social">
+									<a href="mailto: Bonnecaze.Matthew@gmail.com" class="fa fa-envelope-open"></a>
+									<a href="https://www.linkedin.com/in/bonnem/" class="fab fa-linkedin"></a>
+									<!-- <a href="#" class="fab fa-github"></a> -->
+									</section>
+								</section>
+							</section>
+						</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
