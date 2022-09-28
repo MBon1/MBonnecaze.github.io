@@ -56,6 +56,7 @@
 								<h3>Engine: Unity</h3>
 								<h3>Language: C#</h3>
 								<h3>Role: Programmer</h3>
+								<h3><a href="https://bonnem.itch.io/veni-vidi-vici">Download</a></h3>
 							</header>
 							<p>
 								<i>Veni Vidi Vici</i> is a dungeon crawler with rhythm and monster collecting elements made using the Unity Engine.  In <i>Veni Vidi Vici</i>, the player takes control of the former warlord Delphine as she explores the ruins of the civilization she destroyed to restore her lost memory and find redemption.  Through dances, she is capable of purifying and befriending the dungeon's various creatures, who in turn grant her additional dances for combat and skills for exploring the dungeon.  
@@ -247,7 +248,7 @@
 								In <i>Veni Vidi Vici</i>, the player will encounter trees that they can topple over and raise back up.  When toppled over, these trees can be used as a bridge, allowing for the player to cross over pits and hazardous areas that they previously would not have been able to.  This requires that the collider types of each tile the toppled tree falls on to be recorded so that the tiles' collision can be restored when the tree is raised.  As a toppled tree can have other trees topple on top of it, though, before a toppled tree can be raised, it needs to check first that no other trees are on top of it.  To handle this, I have a static dictionary that uses Vector3Int as the keys (representing the tiles) and a stack of GameObjects as the values (representing all of the toppled trees that are on that tile and the order they fell on to that tile).  
 							</p>
 							<div>
-								Alter Tile Collision Code From NewToppleable.cs”
+								Alter Tile Collision Code From “NewToppleable.cs”
 								<br>
 								<div class="codeBlock">
 									<pre>
@@ -389,7 +390,7 @@
 							<br>
 
 							<div>
-								Toppled Tree Stack Code From NewToppleable.cs”
+								Toppled Tree Stack Code From “NewToppleable.cs”
 								<br>
 								<div class="codeBlock">
 									<pre>
