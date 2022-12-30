@@ -71,7 +71,7 @@
 										</p>
 									</div>
 									<div class="col-6 col-12-medium imp-medium">
-										<video controls width="95%" height="auto" name="Broken Cord">
+										<video controls width="95%" height="auto" name="Veni Vidi Vici">
 											<source src="videos/Veni Vidi Vici Game Play Trailer.mp4">
 										</video>
 									</div>
@@ -242,6 +242,660 @@
 								</div>
 							</div>
 
+							<br>
+							<p>
+								An example of the use of JSON files was in the save system. The following module is used to manage the player's data in respect to the game's current state and the save file. 
+							</p>
+							<div>
+								“SaveDataLoader.cs”
+								<br>
+								<div class="codeBlock">
+									<pre>
+										<code>
+	using UnityEngine;
+
+	using JObject = Newtonsoft.Json.Linq.JObject;
+
+	public class SaveDataLoader : MonoBehaviour
+	{
+		private static JObject jobj;
+		private readonly static string path = "/SaveData/SaveData.json";
+		private static SaveData saveData = null;
+		[SerializeField] bool resetData = false;
+
+		private void Awake()
+		{
+			LoadSave();
+		}
+
+		/* Saves a copy of saveData to the save data JSON file.  
+		* If the save data JSON file does not exist, the file will be created.  
+		* If no save data was loaded, this function first creates a save file.  
+		* 
+		*    Takes: NONE
+		* Modifies: Save Data File
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void WriteSave()
+		{
+			if (saveData == null)
+			{
+				DataParser.InitializeJObject(ref jobj, path);
+				saveData = DataParser.Load<SaveData>(jobj);
+			}
+			SetParty();
+			SetCreatureRegistry();
+			SetInventory();
+			SetEventRegistry();
+			DataParser.StoreData<SaveData>(saveData, path);
+		}
+
+		/* Load the player's save data from the save data JSON file.  
+		* If a save data file does not exist, create a default save data
+		* file and load that.  
+		* 
+		*    Takes: NONE
+		* Modifies: saveData
+		*           Player Inventory File
+		*           Current Scene
+		*           Player Prefs (EventManager.switchEvents; EventManager.numericEvents)
+		*           player.transform.position
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void LoadSave()
+		{
+			// Initialize Save Data
+			DataParser.InitializeJObject(ref jobj, path);
+			saveData = DataParser.Load<SaveData>(jobj);
+
+			// Set Player Party
+			saveData.LoadLoadedPlayerParty();
+
+			// Set Creature Registry
+			saveData.LoadLoadedCreatureRegistry();
+
+			// Set Player Inventory
+			saveData.LoadLoadedPlayerInventory();
+
+			// Set Player Story Progress (Event Registry)
+			saveData.LoadLoadedEventRegistry();
+
+			// Set Player Location
+			PlayerLocation playerLocation = saveData.location;
+			playerLocation.LoadLoadedPlayerLocation();
+		}
+
+		/* Resets the player's save data.  
+		* 
+		*    Takes: NONE
+		* Modifies: saveData
+		*           Save Data File
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void DeleteSaveData()
+		{
+			saveData = new SaveData();
+			WriteSave();
+		}
+
+		/* Sets the player's location in saveData.  This does NOT update the save data file.  
+		* 
+		*    Takes: PlayerLocation
+		* Modifies: saveData.location
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetPlayerLocation(PlayerLocation newLocation)
+		{
+			if(saveData != null)
+			{
+				saveData.location = newLocation;
+			}
+		}
+
+		/* Sets the player's location in saveData.  This does NOT update the save data file.  
+		* 
+		*    Takes: string
+		* Modifies: saveData.location
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetPlayerLocation(string scene)
+		{
+			PlayerLocation newLocation = new PlayerLocation(scene);
+			SetPlayerLocation(newLocation);
+		}
+
+		/* Sets the player's location in saveData.  This does NOT update the save data file.  
+		* 
+		*    Takes: string
+		*           SerializableVector2
+		* Modifies: saveData.location
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetPlayerLocation(string scene, SerializableVector2 position)
+		{
+			PlayerLocation newLocation = new PlayerLocation(scene, position);
+			SetPlayerLocation(newLocation);
+		}
+
+		/* Sets the player's location in saveData.  This does NOT update the save data file.  
+		* 
+		*    Takes: string
+		*           Vector2
+		* Modifies: saveData.location
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetPlayerLocation(string scene, Vector2 position)
+		{
+			SetPlayerLocation(scene, new SerializableVector2(position));
+		}
+
+		/* Sets the player's party in saveData.  This does NOT update the save data file.  
+		* If the player is not the the scene, function does nothing.  
+		* 
+		*    Takes: NONE
+		* Modifies: saveData.party
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetParty()
+		{
+			// Get PlayerDataManager from player
+			PlayerDataManager playerDataManager = GetPlayerDataManagerFromScene();
+			if (playerDataManager == null)
+			{
+				return;
+			}
+
+			// Get Player Inventory from PlayerDataManager
+			PlayerParty playerParty = playerDataManager.GetPlayerParty();
+			if (playerParty == null)
+			{
+				return;
+			}
+
+			// Sets saveData.inventory to store the player's party data
+			saveData.party = playerParty.GetPlayerParty();
+		}
+
+		/* Sets the player's creature registry in saveData.  This does NOT update the save data file.  
+		* If the player is not the the scene, function does nothing.  
+		* 
+		*    Takes: NONE
+		* Modifies: saveData.creatureRegistry
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetCreatureRegistry()
+		{
+			// Get PlayerDataManager from player
+			PlayerDataManager playerDataManager = GetPlayerDataManagerFromScene();
+			if (playerDataManager == null)
+			{
+				return;
+			}
+
+			// Get Player Inventory from PlayerDataManager
+			PlayerParty playerParty = playerDataManager.GetPlayerParty();
+			if (playerParty == null)
+			{
+				return;
+			}
+
+			// Get Creature Registry from Player Party
+			BefriendedCreatureRegistry.CreatureRegistry creatureRegistry = playerParty.GetCreatureRegistry();
+			if (creatureRegistry == null)
+			{
+				return;
+			}
+
+			// Sets saveData.inventory to store the player's creature registry data
+			saveData.creatureRegistry = creatureRegistry;
+		}
+
+		/* Sets the player's inventory in saveData.  This does NOT update the save data file.  
+		* If the player is not the the scene, function does nothing.  
+		* 
+		*    Takes: NONE
+		* Modifies: saveData.inventory
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetInventory()
+		{
+			// Get PlayerDataManager from player
+			PlayerDataManager playerDataManager = GetPlayerDataManagerFromScene();
+			if (playerDataManager == null)
+			{
+				return;
+			}
+
+			// Get Player Inventory from PlayerDataManager
+			PlayerInventory playerInventory = playerDataManager.GetPlayerInventory();
+			if (playerInventory == null)
+			{
+				return;
+			}
+
+			// Sets saveData.inventory to store the player's inventory data
+			saveData.inventory = playerInventory.GetInventory();
+		}
+
+		/* Sets the events in the player's event registry in saveData.  This does NOT update the save data file.
+		* 
+		*    Takes: NONE
+		* Modifies: saveData.eventRegistry.switchEvents
+		*           saveData.eventRegistry.numericEvents
+		*  Returns: NONE
+		*  Expects: NONE
+		*/
+		public static void SetEventRegistry()
+		{
+			// Set eventRegistry's binary (switch) events
+			foreach (SwitchEvent switchEvent in saveData.eventRegistry.switchEvents)
+			{
+				if (PlayerPrefs.HasKey(switchEvent.name))
+				{
+					switchEvent.value = EventManager.IntToBool(PlayerPrefs.GetInt(switchEvent.name));
+				}
+			}
+			// Set eventRegistry's numeric-based events
+			foreach (NumericEvent numeric in saveData.eventRegistry.numericEvents)
+			{
+				if (PlayerPrefs.HasKey(numeric.name))
+				{
+					numeric.value = PlayerPrefs.GetFloat(numeric.name);
+				}
+			}
+		}
+
+		/* Gets PlayerDataManager from Player object in scene.  If PlayerDataManager cannot be obtained, returns null.  
+		* 
+		*    Takes: NONE
+		* Modifies: NONE
+		*  Returns: PlayerDataManager
+		*  Expects: NONE
+		*/
+		private static PlayerDataManager GetPlayerDataManagerFromScene()
+		{
+			// Get Player from scene
+			GameObject player = GameObject.FindGameObjectWithTag("Player");
+			if (player == null)
+			{
+				return null;
+			}
+
+			// Get PlayerDataManager from player
+			PlayerDataManager playerDataManager = player.GetComponent<PlayerDataManager>();
+			if (playerDataManager == null)
+			{
+				return null;
+			}
+
+			return playerDataManager;
+		}
+	}
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+							<p>
+								<br>
+								During the development of <i>Veni Vidi Vici</i>, I was tasked with implementing the dialogs defined by the narrative designer.  To provide more flexibility and improve productivity, I developed an event processor engine.  Rather than hardcoding the dialog text and various event triggers when a dialog is displayed, I created an xml layout in which those values can be defined.  
+							</p>
+							<div>
+								Example Dialog xml:
+								<br>
+								<textarea class="codeBlock" cols="200" style="border:none;">
+	<?xml version="1.0" encoding="utf-8"?>
+	<EventCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+		<Events>
+			<Event type="PauseGameplay"/>
+			<Event type="DialogueEvent">
+				<Speaker>Cyphlame</Speaker>
+				<Text>...</Text>
+			</Event>
+			<Event type="DialogueEvent">
+				<Speaker>Delphine</Speaker>
+				<Text>You want to test me, don't you? Well, let's see if I can meet your standards.</Text>
+			</Event>
+			<Event type="DialogueEvent">
+				<Speaker>Cyphlame</Speaker>
+				<Text>!</Text>
+			</Event>
+			<Event type="HideDialogue"/>
+	
+			<Event type="FadeToBlack">
+				<Duration>1.5</Duration>
+			</Event>
+			<!--Single-use dialogue-->
+			<Event type="SwitchEvent">
+				<Event_Name>CyphlameDisappear</Event_Name>
+				<Switch_Event_Value>true</Switch_Event_Value>
+			</Event>
+			<Event type="FadeFromBlack">
+				<Duration>1.5</Duration>
+			</Event>
+			<Event type="SwitchEvent">
+				<Event_Name>EncounterCyplame</Event_Name>
+				<Switch_Event_Value>true</Switch_Event_Value>
+			</Event>
+			<Event type="ResumeGameplay"/>
+		</Events>
+	</EventCollection>
+								</textarea>
+							</div>
+							<br>
+							<p>
+								For each dialog created, an event xml file is assigned.  Using these files, the narrative designer can add text and event actions.  If after a run through of the game, it is determined that the text should be changed the associated xml file can be updated and with having to rebuild the application the new text will be displayed.
+							</p>
+							<p>
+								When a dialog is displayed, a DialogueTrigger object is instantiated.  The object reads the associated xml event file to load each action defined in the file into a collection of events.  As the player interacts with the dialog, actions are processed based on their action type.
+							</p>
+							“DialogueTrigger.cs”
+								<br>
+								<textarea class="codeBlock" cols="200" style="border:none;">
+	using System.Collections;
+	using UnityEngine;
+	using UnityEngine.SceneManagement;
+	
+	public class DialogueTrigger : MonoBehaviour
+	{
+		[SerializeField] string xmlPath;
+		[SerializeField] bool triggerOnInteract = false;
+		[SerializeField] SwitchEvent triggeringSwitchEvent;
+		bool addedSwitchEvent = false;
+		[SerializeField] NumericEvent triggeringNumericEvent;
+		bool addedNumericEvent = false;
+		[SerializeField] GameObject dialogue = null;
+		DialogueBox dialogueBox = null;
+		GameObject fadeToBlack = null;
+		BlackScreen blackScreen = null;
+		PlayerController playerController;
+	
+		[SerializeField] int index = 0;
+		public EventCollection events = new EventCollection();
+	
+		// Returns if this trigger begins when interacted with
+		public bool TriggerOnInteract
+		{
+			get => triggerOnInteract;
+		}
+	
+	
+		protected void Awake()
+		{
+			LoadEvents(xmlPath);
+			if (triggeringSwitchEvent.name != "" && PlayerPrefs.HasKey(triggeringSwitchEvent.name))
+			{
+				if (!EventManager.ValidateEvent(triggeringSwitchEvent.name, triggeringSwitchEvent.value))
+				{
+					EventManager.OnEnableSwitchEvent += StartInteraction;
+					addedSwitchEvent = true;
+				}
+			}
+			if (triggeringNumericEvent.name != "" && PlayerPrefs.HasKey(triggeringNumericEvent.name))
+			{
+				if (!EventManager.ValidateEvent(triggeringNumericEvent.name, triggeringNumericEvent.value))
+				{
+					EventManager.OnSetNumericEvent += StartInteraction;
+					addedNumericEvent = true;
+				}
+			}
+	
+			playerController = FindObjectOfType<PlayerController>();
+		}
+	
+		protected void OnDestroy()
+		{
+			if (addedSwitchEvent)
+			{
+				EventManager.OnEnableSwitchEvent -= StartInteraction;
+			}
+			if (addedNumericEvent)
+			{
+				EventManager.OnSetNumericEvent -= StartInteraction;
+			}
+			Time.timeScale = 1;
+		}
+	
+	
+		protected void LoadEvents(string xml)
+		{
+			xmlPath = xml;
+			if (xmlPath == null || xmlPath == "")
+			{
+				events.events.Clear();
+			}
+			else
+			{
+				events = EventCollection.Load(xmlPath);
+			}
+		}
+	
+		/* Starts Dialogue Interaction
+			* 
+			*    Takes: NONE
+			* Modifies: index
+			*           dialogue
+			*           dialogueBox
+			*  Returns: NONE
+			*  Expects: NONE
+			*/
+		public void StartInteraction()
+		{
+			index = 0;
+			Advance();
+		}
+	
+		/* Advance to the next event in list of events
+			* 
+			*    Takes: NONE
+			* Modifies: index
+			*           dialogue
+			*           dialogueBox
+			*  Returns: NONE
+			*  Expects: NONE
+			*/
+		public void Advance()
+		{
+			// Checks if there are still events to execute
+			if (events.events.Count > index)
+			{
+				bool autoAdvance = true;
+				EventTypes type = events.events[index].type;
+	
+				// Checks if current event is a Dialogue Event
+				if (type == EventTypes.DialogueEvent)
+				{
+					// Checks if there is no dialogue box to display to.
+					// If so, create a new one.
+					if (dialogueBox == null)
+					{
+						dialogue = Instantiate(Resources.Load("Dialogue & Events/DialogueCanvas")) as GameObject;
+						dialogueBox = dialogue.GetComponentInChildren<DialogueBox>();
+					}
+					dialogueBox.StartDialogue(events.events[index], this);
+					autoAdvance = false;
+				}
+				// Checks if gameplay should be paused
+				else if (type == EventTypes.PauseGameplay)
+				{
+					Time.timeScale = 0;
+				}
+				// Checks if gameplay should be resumed
+				else if (type == EventTypes.ResumeGameplay)
+				{
+					Time.timeScale = 1;
+				}
+				// Checks if player controls should be restored
+				else if (type == EventTypes.RestorePlayerControls)
+				{
+					if (playerController != null)
+					{
+						playerController.SetPlayerControls(true);
+					}
+				}
+				else if (type == EventTypes.SceneChange)
+				{
+					string targetScene = events.events[index].scene;
+					if (targetScene != "")
+					{
+						// If saving game and no save file exists, a save file will be created
+						if (!events.events[index].doNotSaveGame)
+						{
+							SaveDataLoader.SetPlayerLocation(targetScene);
+							SaveDataLoader.WriteSave();
+						}
+						SceneManager.LoadScene(targetScene);
+					}
+				}
+				else if (type == EventTypes.FadeToBlack)
+				{
+					if (fadeToBlack == null)
+						fadeToBlack = Instantiate(Resources.Load("Dialogue & Events/FadeToBlack")) as GameObject;
+					if (blackScreen == null)
+						blackScreen = fadeToBlack.GetComponentInChildren<BlackScreen>();
+					StartCoroutine(FadeToBlack(blackScreen, events.events[index].duration));
+					autoAdvance = false;
+				}
+				else if (type == EventTypes.FadeFromBlack)
+				{
+					if (fadeToBlack != null && blackScreen != null)
+					{
+						Debug.Log("FADE TO BLACK");
+						StartCoroutine(FadeFromBlack(blackScreen, events.events[index].duration));
+						autoAdvance = false;
+					}
+				}
+				else if (type == EventTypes.HideDialogue)
+				{
+					if (dialogue != null)
+					{
+						Debug.Log(this.gameObject.name + " IS DESTROYING DIALOGUE " + dialogue.name);
+						Destroy(dialogue);
+					}
+				}
+				// Checks if a switch event should be set
+				else if (type == EventTypes.SwitchEvent)
+				{
+					EventManager.EnableSwitchEvent(events.events[index].eventName, events.events[index].switchEventValue, true);
+				}
+				// Checks if a numeric event should be set
+				else if (type == EventTypes.NumericEvent)
+				{
+					EventManager.SetNumericEvent(events.events[index].eventName, events.events[index].numericEventValue, true);
+				}
+				else if (type == EventTypes.Wait)
+				{
+					StartCoroutine(WaitForSecondsRealtime(events.events[index].duration));
+				}
+				else if (type == EventTypes.HandlePartyOverflow)
+				{
+					if (playerController != null)
+					{
+						bool overflow = playerController.OpenPlayerPartyForRemoval();
+						if (overflow)
+						{
+							Debug.Log("PARTY OVERFLOW OCCURRED");
+						}
+						else
+						{
+							Debug.Log("PARTY OVERFLOW DID NOT OCCUR");
+							Time.timeScale = 1;
+						}
+					}
+				}
+	
+				index++;
+				if (autoAdvance)
+					Advance();
+			}
+			// No event is left to be executed
+			else
+			{
+				if (dialogue != null)
+				{
+					Destroy(dialogue);
+				}
+			}
+		}
+	
+	
+		protected IEnumerator WaitForSecondsRealtime(float duration)
+		{
+			yield return new WaitForSecondsRealtime(duration);
+			Advance();
+		}
+	
+		IEnumerator FadeToBlack(BlackScreen blackScreen, float duration)
+		{
+			yield return blackScreen.FadeToBlack(duration);
+			Advance();
+		}
+	
+		IEnumerator FadeFromBlack(BlackScreen blackScreen, float duration)
+		{
+			yield return blackScreen.FadeFromBlack(duration);
+			Advance();
+		}
+	
+	
+		protected void StartInteraction(string eventName, bool value, bool loadingValueLive)
+		{
+			//if (EventManager.ValidateEvent(eventName, value))
+			if (eventName == triggeringSwitchEvent.name && value == triggeringSwitchEvent.value)
+			{
+				if (loadingValueLive)
+				{
+					StartInteraction();
+				}
+			}
+		}
+	
+		protected void StartInteraction(string eventName, float value, bool loadingValueLive)
+		{
+			//if (EventManager.ValidateEvent(eventName, value))
+			if (eventName == triggeringNumericEvent.name && value == triggeringNumericEvent.value)
+			{
+				if (loadingValueLive)
+				{
+					StartInteraction();
+				}
+			}
+		}
+	
+	
+		protected void OnTriggerEnter2D(Collider2D collision)
+		{
+			// Check if event should be triggered on contact
+			if (collision.tag == "Player" && !triggerOnInteract)
+			{
+				StartInteraction();
+			}
+		}
+	
+		protected void OnTriggerExit2D(Collider2D collision)
+		{
+			// Check if event should be triggered on contact
+			if (collision.tag == "Player" && !triggerOnInteract)
+			{
+				index = events.events.Count;
+				Advance();
+			}
+		}
+	}										
+								</textarea>
+
+							<br>
 							<br>
 							<p>
 								<br>

@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<!--
+	Halcyonic by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Save System (Game Architecture Project)</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+</head>
+
+<body class="subpage">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Logo -->
+<!-- 						
+						<h1><a href="index.html" id="logo">Matthew Bonnecaze</a></h1>
+ -->
+						<a href="index.html" id="logo">
+							<img src="images/Matthew2.png"></a>
+						</a>
+
+						<!-- Nav -->
+						<nav id="nav">
+							<a href="index.html">Home</a>
+							<a href="https://www.linkedin.com/in/bonnem/" class="icon brands fab fa-linkedin"></a>
+							<!-- <a href="#" class="icon brands fab fa-github"></a> -->
+						</nav>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Content -->
+		<section id="content">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Main Content -->
+						<section>
+							<header>
+								<h2>Save System (Game Architecture Final Project)</h2>
+								<h3>Language: C</h3>
+								<h3>Role: Programmer</h3>
+								<h3><a href="https://github.com/MBon1/Stellarum">Github Repository</a></h3>
+								<h4>&emsp;<a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c">save_sys.c</a></h4>
+								<h4>&emsp;<a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys_sample_game.c">save_sys_sample_game.c</a></h4>
+							</header>
+							<p>
+								For my Game Architecture final project, I implemented a save system to the game engine developed during the course.  I used the JSON-C library to serialize and parse entity data, preserving game data between play sessions in a json file.  I allowed for a total of 10 possible save files, each one corresponding to a numeric key on the keyboard.  
+                                <br><br>
+                                Each frame, save_sys.c/save_sys_update is called.  This function is what is used to determine which save system operation should be performed (save game, load save, delete save).  It takes two functions from the game as parameters to know what data to write to the file and how to use the data read from the save file.  
+							</p>
+                            <p>
+								<h3>Saving to a File</h3>
+								To save the game, select a numeric key.  The desired entities will be serialized and written to a json file.  Saving to a file will either overwrite or create a new save file depending on if a file is already associated with that number.  
+                                <br><br>
+                                The actual recording of the entities and their components are done using the game's save_sys_sample_game.c/write_save function, which stores the necessary values to recreate the entity in JSON format and adds it  to the save system's json object.  Once all desired entities are added to the json object, the contents of the json object is then written to the save file using save_sys.c/save_sys_write_save.  
+							</p>
+                            <p>
+								<h3>Loading from a Save File</h3>
+                                By default, no save file will be loaded.  To load a save file, I  select ctrl + a numeric key.  If a save file is associated with this number, the save file will be read.  
+                                <br><br>
+                                Using save_sys.c/save_sys_read_save,  the save file is read and its contents are parsed into the save system's json object.  The game's save_sys_sample_game.c/load_save function is called, which takes the json object's fields and spawn in entities with their component values outlined by the json objects.  
+							</p>
+                            <p>
+								<h3>Deleting a Save File</h3>
+								To delete a save file, the user would select delete + a numeric key, which calls save_sys.c/save_sys_delete_save.  If a file is associated with that number, the save file will be deleted using a delete operation I added to our file system.  
+							</p>
+
+							<div class="container">
+								<div class="row">
+                                    <h3>DEMO</h3>
+									<video controls width="95%" height="auto" name="Save System (Game Architecture Final Project)">
+                                        <source src="videos/GASaveSys.mp4">
+                                    </video>
+								</div>
+                            </div>
+                        </section>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<section id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-8 col-12-medium">
+						<section class="split contact">
+							<section>
+								<section>
+									<h3>Social Media</h3>
+									<section id="social">
+									<a href="mailto: Bonnecaze.Matthew@gmail.com" class="fa fa-envelope-open"></a>
+									<a href="https://www.linkedin.com/in/bonnem/" class="fab fa-linkedin"></a>
+									<!-- <a href="#" class="fab fa-github"></a> -->
+									</section>
+								</section>
+							</section>
+						</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
