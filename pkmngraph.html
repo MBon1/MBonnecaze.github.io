@@ -7,7 +7,7 @@
 <html>
 
 <head>
-	<title>Veni Vidi Vici</title>
+	<title>Independent Study Project</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="assets/css/main.css" />
@@ -51,33 +51,240 @@
 						<!-- Main Content -->
 						<section>
 							<header>
-								<h2>Pokémon Graph Application</h2>
+								<h2>Independent Study Project (Pokémon Graph Application)</h2>
 								<h3>Engine: Unity</h3>
 								<h3>Languages: C#, SQL</h3>
+								<h3><a href="https://github.com/MBon1/Independent-Study-Code-Samples">Github Repository (Code Snippets)</a></h3>
 							</header>
 							<div class="container">
 								<div class="row">
 									<div class="col-6 col-12-medium">
 										<p>
-											<h3>DEMO</h3>
-                                            The Pokémon Graph Application was developed using the Unity 2D physics engine; programmed in C# and uses SQL for querying the Pokédex databases.
+                                            The Pokémon Graph Application is a data visualization tool developed using the Unity 2D physics engine; programmed in C#.  <a href="https://assetstore.unity.com/packages/tools/integration/sqliter-20660">SQLiter</a> was used to query Pokémon databases using SQL.
                                             <br><br>
                                             Nodes representing Pokémon types are spawned along the perimeter of the graph with Pokémon Nodes spawned between Type Nodes.  A Pokémon Node has edges connecting them to these Type Nodes presenting the types of that Pokémon.  
 										</p>
 									</div>
 									<div class="col-6 col-12-medium imp-medium">
-										<video controls width="95%" height="auto" name="Pokémon Graph Application">
-											<source src="videos/Veni Vidi Vici Game Play Trailer.mp4">
-										</video>
+                                        <iframe controls width="95%" height="125%" name="Pokémon Graph Application" src="https://www.youtube.com/embed/wOkfJaP3jvI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 									</div>
 								</div>
 							</div>
+
 							<p>
-                                <h3>Engine: Unity</h3>
-                                <h4>Engine: Unity</h4>
-								<i>Veni Vidi Vici</i> is a dungeon crawler with rhythm and monster collecting elements made using the Unity Engine.  In <i>Veni Vidi Vici</i>, the player takes control of the former warlord Delphine as she explores the ruins of the civilization she destroyed to restore her lost memory and find redemption.  Through dances, she is capable of purifying and befriending the dungeon's various creatures, who in turn grant her additional dances for combat and skills for exploring the dungeon.  
+                                <h3>Feature: Spawn Types</h3>
+                                <div class="h4Inner">
+                                    To spawn Type Nodes along the perimeter of the graph, select the “Spawn All Types” button. Type Nodes are kinematic objects to keep them in place.  
+                                    <br>
+                                    When producing a graph, this should be the first action done.  Selecting the “Spawn All Types” button will clear all Pokémon Nodes if any have been spawned.  
+                                    <br>
+                                    <a href="https://youtu.be/wOkfJaP3jvI">Demo Timestamp</a>
+                                    <br>Function to Spawn Types Around Graph Perimeter: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/QuerySearchButtonHandler.cs#L1">QuerySearchButtonHandler.cs/SpawnAllTypeNodes()</a>
+                                </div>
 							</p>
 
+							<p>
+                                <h3>Feature: Set Pokédex</h3>
+                                <div class="h4Inner">
+								The Pokédex being used can be changed, which can allow us to limit our search to Pokémon available in a specific game.  To change a Pokédex, select the dropdown underneath  “POKÉDEX” and select the Pokédex you want to use.  By default, the national Pokédex, which contains all Pokémon, is set.  At the moment, we can select from the Pokémon Diamond and Pearl (DP), Pokémon Platinum (Pt), Pokémon Black and White (BW), and Pokémon Black 2 and White 2 (B2W2) Pokédexes.
+                                <br>
+                                <a href="https://youtu.be/wOkfJaP3jvI?t=3">Demo Timestamp</a>
+                                </div>
+							</p>
+
+							<p>
+                                <h3>Pokémon Nodes</h3>
+                                <div class="h4Inner">
+                                    Pokémon Nodes are spawned at the midpoint between two Type Nodes. Spring joints are used to connect the Pokémon Nodes to their corresponding Type Nodes. Pokémon of the same type combination have collision enabled between them while Pokémon Nodes that do not have the same type combination will not. A slight attraction is placed on the Pokémon Nodes pulling them slightly towards the center of the graph through a point effector around the central point of the graph while an edge collider prevents the nodes from moving outside of the perimeter.  When all Pokémon are spawned in, the Type Nodes resize relative to the number of Pokémon that have that type.  Pokémon Nodes of the same type will group together in the same area of the graph.  
+                                    <br><br>
+                                    There are various ways to query Pokémon and add them to the graph.  You can select from Pokémon with a specific type combination, randomly select a given number of Pokémon, or select from all Pokémon in the current Pokédex.  You can further modify the search parameters with the toggles and dropdowns to the right of the search buttons.  These parameters allow you to, for example, search for Pokémon who do not evolve or exclude Legendaries and Mythical Pokémon.  
+                                </div>
+							</p>
+
+                            <p>
+                                <h3>Feature: Querying Pokémon</h3>
+                                <div class="h4OuterInit">
+                                    <h4>Finding All Pokémon</h4>
+                                    <div class="h4Inner">
+                                        Selecting the “Find All Pokémon” button spawns in all Pokémon from the selected Pokédex.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=8">Demo Timestamp</a>
+                                        <br>Function to Perform Query: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/QuerySearchButtonHandler.cs#L38">QuerySearchButtonHandler.cs/ExecuteAllPokemonQuery()</a>
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Find Random Pokémon</h4>
+                                    <div class="h4Inner">
+                                        By selecting the “Spawn Random Pokémon” button, random Pokémon Nodes will be spawned into the graph.  By default, 2 random Pokémon are spawned in.  You can set how many Pokémon to be spawned by inputting a number into the textbox next to the button.
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=125">Demo Timestamp</a>
+                                        <br>Function to Perform Query: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/QuerySearchButtonHandler.cs#L152">QuerySearchButtonHandler.cs/ExecuteRandomPokemonSearchQuery()</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="h4Outer">
+                                    <h4>Find Pokémon by Type</h4>
+                                    <div class="h4Inner">
+                                        Pokémon can be queried by type combination.  You can set the desired type combination using the dropdowns beneath “TYPE 1” and “TYPE 2”.  If either Type 1 or Type 2 are left blank, the application will search for Pokémon with only the one type inputted.  The “...” option for Type 2 acts as a wild card.  It will search for all Pokémon that have the selected type for Type 1 in its Type combination.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=147">Demo Timestamp</a>
+                                        <br>Function to Perform Query: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/QuerySearchButtonHandler.cs#L33">QuerySearchButtonHandler.cs/ExecuteTypeSearchQuery()</a>
+                                    </div>
+                                </div>
+							</p>
+
+                            <p>
+                                <h3>Feature: Query Parameters</h3>
+                                <div class="h4Inner">
+                                    <a href="https://youtu.be/wOkfJaP3jvI?t=147">Demo Timestamp</a>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Search for Symmetric Typing</h4>
+                                    <div class="h4Inner">
+                                        If “Search for Symmetric” is selected, the type search will look for Pokémon with that type combination and ignore the order of the types.  By default, this option is selected.  
+                                    </div>
+                                </div>
+                                
+                                <div class="h4Outer">
+                                    <h4>Include Forms</h4>
+                                    <div class="h4Inner">
+                                        When this toggle is selected, alternate forms are included when performing a query.  This includes Mega Evolutions and Regional Variants.  
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Only Final Evolutions</h4>
+                                    <div class="h4Inner">
+                                        When this toggle is selected, a condition is added to the query where only Pokémon who do not evolve will be spawned.  
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Not in Regional Dex</h4>
+                                        <div class="h4Inner">
+                                        When this toggle is selected, a condition is added to the query where only Pokémon who are not a part of the selected Pokédex will be spawned.  
+                                    </div>
+                                </div>
+                                
+                                <div class="h4Outer">
+                                    <h4>Restricted Legendaries, Sub-Legendaries, and Mythicals</h4>
+                                        <div class="h4Inner">
+                                        Certain Pokémon are categorized as Restricted Legendaries, Sub-Legendaries, or Mythicals.  These Pokémon are typically powerful, late-game Pokémon that may be tied to an event.  They tend not to be used by NPCs and are banned in some tournaments.  
+                                        <br>
+                                        For each of these categories, you can select to “Include”, “Only” Include, or “Exclude” them from a query by selecting one of these options from their corresponding dropdown.  
+                                    </div>
+                                </div>
+							</p>
+
+                            <p>
+                                <h3>Clearing Nodes</h3>
+                                <div class="h4Inner">
+								    Nodes can be cleared after a query.  There are two parameters to select which nodes are deleted: “Clear Pokémon Nodes” and “Clear All Nodes”.  Selecting “Clear Pokémon Nodes” will only remove the currently spawned Pokémon Nodes whereas selecting “Clear All Nodes” will also remove the spawned Type Nodes.  
+                                </div>
+							</p>
+
+                            <p>
+                                <h3>Working with the Resulting Graph</h3>
+                                <div class="h4OuterInit">
+                                    <h4>Resizing the Graph</h4>
+                                    <div class="h4Inner">
+                                        The slider will change the radius of the graph, ranging between a radius of 14 and 140.  You can see the size of the radius in the textbox next to the slider.  When scaling the radius down, some Pokémon Nodes will remain on the outside of the graph.  Selecting “Refresh Pokémon Pos.” button will take all Pokémon Nodes outside of the perimeter of the graph and move them back into the graph.
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=29">Demo Timestamp (increasing radius)</a>
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=109">Demo Timestamp (shrinking radius)</a>
+                                        <br>Function to Resize Graph Radius: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/CentralPointScaler.cs#L1">CentralPointScaler.cs/ScaleGraph()</a>
+                                        <br>Function to Refresh Pokémon Position: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/QuerySearchButtonHandler.cs#L25">QuerySearchButtonHandler.cs/UpdatePokemonNodePosition()</a>
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Zooming In and Out and Changing the Camera's Position</h4>
+                                    <div class="h4Inner">
+                                        Using the scroll wheel of the mouse, you can zoom in and out of the graph.  Pressing down the right mouse button and dragging it will move the camera's position in the direction of the mouse cursor.  You can reset the camera by pressing the escape button.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=31">Demo Timestamp</a>
+                                        <br>Function to Read and Process Camera Operation Input: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/CameraController.cs#L9">CameraController.cs/ReadInput()</a>
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Pausing Physics</h4>
+                                    <div class="h4Inner">
+                                        To pause physics, select the P key.  To unpause, select P again.  
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>View Node Name and Connected Nodes</h4>
+                                    <div class="h4Inner">
+                                        To view the name of the type or Pokémon a node represents, hover over it with the mouse cursor.  The node gets highlighted as a textbox with its name appears.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=41">Demo Timestamp</a>
+                                        <br>Function to Highlight and Display Node Name: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeMouseManager.cs#L8">NodeMouseManager.cs/HighlightIcon()</a>
+                                        <br>Function to Unhighlight and Hide Node Name: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeMouseManager.cs#L13">NodeMouseManager.cs/UnighlightIcon()</a>
+                                        <br><br>
+                                        To view the nodes it is immediately connected to, press the spacebar while hovering over that node.  This will highlight the connected nodes and change the color of the edge connecting these nodes. 
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=41">Demo Timestamp</a>
+                                        <br>Function to Show Connecting Nodes: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeIcon.cs#L1">NodeIcon.cs/HighlightConnectingNodes()</a>
+                                        <br>Function to Stop Showing Connecting Nodes: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeIcon.cs#L22">NodeIcon.cs/UnhighlightConnectingNodes()</a>
+                                        <br>&emsp;Called from: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeMouseManager.cs#L20">NodeMouseManager.cs/OnMouseOver()</a>
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Deleting a Node</h4>
+                                    <div class="h4Inner">
+                                        Nodes can be deleted manually by pressing the delete key while hovering over a node.  If a Type Node is deleted, it will delete all Pokémon Nodes it is connected to.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=63">Demo Timestamp</a>
+                                        <br>Function to Delete a Node: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeIcon.cs#L43">NodeIcon.cs/DeleteNode()</a>
+                                        <br>&emsp;Called from: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeMouseManager.cs#L20">NodeMouseManager.cs/OnMouseOver()</a>
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Moving a Node</h4>
+                                    <div class="h4Inner">
+                                        You can change the position of a node by left-clicking on it and dragging and dropping it to its new position.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=47">Demo Timestamp</a>
+                                        <!--<br>Moving a Node:
+                                        <br>&emsp;<a href="">NodeMouseManager.cs/OnMouseDown()</a>
+                                        <br>&emsp;<a href="">NodeMouseManager.cs/OnMouseDrag()</a>
+                                        <br>&emsp;<a href="">NodeMouseManager.cs/OnMouseUp()</a>-->
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Fixing a Node's Position</h4>
+                                    <div class="h4Inner">
+                                        Sometimes, nodes may overlap each other or a node may move a lot due to physics.  Moving a node may not work as it will return to its previous position.  To fix the position of a node, press the control key and left-click the node.  This will freeze the X and Y positions of the node's rigid body. 
+                                        <br>
+                                        To unfreeze a node, press the control key and left-click the node again.  
+                                        <br>
+                                        <a href="https://youtu.be/wOkfJaP3jvI?t=55">Demo Timestamp</a>
+                                        <br>Code to Freeze Node's Position Locate in: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeIcon.cs#L77">NodeIcon.cs/BindNodeToConnecting()</a>
+                                    </div>
+                                </div>
+
+                                <div class="h4Outer">
+                                    <h4>Relative Positioning (Locking a Node's Position Relative to its Connecting Nodes)</h4>
+                                    <div class="h4Inner">
+                                        You can force connecting nodes to stay a fixed distance from a “parent” node by pressing shift and left-clicking the parent node.  Moving this parent node will also move its children nodes.  You can lock both Pokémon Nodes to a Type Node or Type Nodes to a Pokémon Node.  
+                                        <br><br>
+                                        To unlock the children nodes from their parent node, hold shift and left-clicking the parent node.  You can manually invert this locked state of a node by holding down shift and right-clicking on a node.  For example, if a child node is locked to a parent node, inverting its locked state will unlock the child node from its parent node.  
+                                        <br>
+                                        <br>Binding Node to Connecting Nodes: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeIcon.cs#L77">NodeIcon.cs/BindNodeToConnecting()</a>
+                                        <br>&emsp;Called from: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeMouseManager.cs#L58">NodeMouseManager.cs/OnMouseDown()</a>
+                                        <br>Unbinding Node to Connecting Nodes: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeIcon.cs#L102">NodeIcon.cs/UnbindConnectingNode()</a>
+                                        <br>&emsp;Called from: <a href="https://github.com/MBon1/Independent-Study-Code-Samples/blob/main/NodeMouseManager.cs#L58">NodeMouseManager.cs/OnMouseDown()</a>
+                                    </div>
+                                </div>
+							</p>
 						</section>
 
 					</div>
