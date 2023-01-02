@@ -59,25 +59,25 @@
 								<h4>&emsp;<a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys_sample_game.c">save_sys_sample_game.c</a></h4>
 							</header>
 							<p>
-								For my Game Architecture final project, I implemented a save system to the game engine developed during the course.  I used the JSON-C library to serialize and parse entity data, preserving game data between play sessions in a json file.  I allowed for a total of 10 possible save files, each one corresponding to a numeric key on the keyboard.  
+								For my Game Architecture final project, I implemented a save system to the game engine developed during the course.  I used the <a href="https://github.com/json-c/json-c">JSON-C library</a> to serialize and parse entity data, preserving game data between play sessions in a json file.  I allowed for a total of 10 possible save files, each one corresponding to a numeric key on the keyboard.  
                                 <br><br>
-                                Each frame, save_sys.c/save_sys_update is called.  This function is what is used to determine which save system operation should be performed (save game, load save, delete save).  It takes two functions from the game as parameters to know what data to write to the file and how to use the data read from the save file.  
+                                Each frame, <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L107">save_sys.c/save_sys_update</a> is called.  This function is what is used to determine which save system operation should be performed (save game, load save, delete save).  It takes two functions from the game as parameters to know what data to write to the file and how to use the data read from the save file.  
 							</p>
                             <p>
 								<h3>Saving to a File</h3>
 								To save the game, select a numeric key.  The desired entities will be serialized and written to a json file.  Saving to a file will either overwrite or create a new save file depending on if a file is already associated with that number.  
                                 <br><br>
-                                The actual recording of the entities and their components are done using the game's save_sys_sample_game.c/write_save function, which stores the necessary values to recreate the entity in JSON format and adds it  to the save system's json object.  Once all desired entities are added to the json object, the contents of the json object is then written to the save file using save_sys.c/save_sys_write_save.  
+                                The actual recording of the entities and their components are done using the game's <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys_sample_game.c#L431">save_sys_sample_game.c/write_save</a> function, which stores the necessary values to recreate the entity in JSON format and adds it  to the save system's json object.  Once all desired entities are added to the json object, the contents of the json object is then written to the save file using <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L63">save_sys.c/save_sys_write_save</a>.  
 							</p>
                             <p>
 								<h3>Loading from a Save File</h3>
                                 By default, no save file will be loaded.  To load a save file, I  select ctrl + a numeric key.  If a save file is associated with this number, the save file will be read.  
                                 <br><br>
-                                Using save_sys.c/save_sys_read_save,  the save file is read and its contents are parsed into the save system's json object.  The game's save_sys_sample_game.c/load_save function is called, which takes the json object's fields and spawn in entities with their component values outlined by the json objects.  
+                                Using <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L79">save_sys.c/save_sys_read_save</a>,  the save file is read and its contents are parsed into the save system's json object.  The game's <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys_sample_game.c#L453">save_sys_sample_game.c/load_save</a> function is called, which takes the json object's fields and spawn in entities with their component values outlined by the json objects.  
 							</p>
                             <p>
 								<h3>Deleting a Save File</h3>
-								To delete a save file, the user would select delete + a numeric key, which calls save_sys.c/save_sys_delete_save.  If a file is associated with that number, the save file will be deleted using a delete operation I added to our file system.  
+								To delete a save file, the user would select delete + a numeric key, which calls <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L98">save_sys.c/save_sys_delete_save</a>.  If a file is associated with that number, the save file will be deleted using a delete operation I added to our file system.  
 							</p>
 
 							<div class="container">
