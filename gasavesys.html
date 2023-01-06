@@ -54,38 +54,253 @@
 								<h2>Save System (Game Architecture Final Project)</h2>
 								<h3>Language: C</h3>
 								<h3>Role: Programmer</h3>
-								<h3><a href="https://github.com/MBon1/Stellarum">Github Repository</a></h3>
+								<!--<h3><a href="https://github.com/MBon1/Stellarum">Github Repository</a></h3>-->
 							</header>
 							<p>
-								For my Game Architecture final project, I implemented a save system to the game engine developed during the course.  I used the <a href="https://github.com/json-c/json-c">JSON-C library</a> to serialize and parse entity data, preserving game data between play sessions in a json file.  I allowed for a total of 10 possible save files, each one corresponding to a numeric key on the keyboard.  
-                                <br><br>
-                                Each frame, <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L107">save_sys.c/save_sys_update</a> is called.  This function is what is used to determine which save system operation should be performed (save game, load save, delete save).  It takes two functions from the game as parameters to know what data to write to the file and how to use the data read from the save file.  
+								For my Game Architecture final project, I developed a save system for a game engine that was built throughout the semester in C.  The save system allows for 10 save files that can be created and written to, read from, and deleted.  
 							</p>
-                            <p>
-								<h3>Saving to a File</h3>
-								To save the game, select a numeric key.  The desired entities will be serialized and written to a json file.  Saving to a file will either overwrite or create a new save file depending on if a file is already associated with that number.  
-                                <br><br>
-                                The actual recording of the entities and their components are done using the game's <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys_sample_game.c#L431">save_sys_sample_game.c/write_save</a> function, which stores the necessary values to recreate the entity in JSON format and adds it  to the save system's json object.  Once all desired entities are added to the json object, the contents of the json object is then written to the save file using <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L63">save_sys.c/save_sys_write_save</a>.  
-							</p>
-                            <p>
-								<h3>Loading from a Save File</h3>
-                                By default, no save file will be loaded.  To load a save file, I  select ctrl + a numeric key.  If a save file is associated with this number, the save file will be read.  
-                                <br><br>
-                                Using <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L79">save_sys.c/save_sys_read_save</a>,  the save file is read and its contents are parsed into the save system's json object.  The game's <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys_sample_game.c#L453">save_sys_sample_game.c/load_save</a> function is called, which takes the json object's fields and spawn in entities with their component values outlined by the json objects.  
-							</p>
-                            <p>
-								<h3>Deleting a Save File</h3>
-								To delete a save file, the user would select delete + a numeric key, which calls <a href="https://github.com/MBon1/Stellarum/blob/main/src/save_sys.c#L98">save_sys.c/save_sys_delete_save</a>.  If a file is associated with that number, the save file will be deleted using a delete operation I added to our file system.  
-							</p>
-
+							<div >
 							<div class="container">
 								<div class="row">
-                                    <h3>DEMO</h3>
-									<video controls width="95%" height="auto" name="Save System (Game Architecture Final Project)">
-                                        <source src="videos/GASaveSys.mp4">
-                                    </video>
+									<div class="col-6 col-12-medium">
+										<p>
+											<h3>DEVELOPMENT</h3>
+											When designing the save system, I chose to store the save data in the JSON file format, using the <a href="https://github.com/json-c/json-c">JSON-C library</a> to serialize to and deserialize from JSON.  I designed a C struct to hold save data in memory and then wrote code to write the data in the C struct into a JSON file, read data from a JSON file and store it into the C struct, and delete an existing save file.  Finally, to demonstrate the save system, I modified a game made for a previous homework assignment.  You can watch this demo by playing the video located to the right.  
+										</p>
+									</div>
+									<div class="col-6 col-12-medium imp-medium">
+										<video controls width="95%" height="auto" name="Veni Vidi Vici">
+											<source src="videos/GASaveSys.mp4">
+										</video>
+									</div>
 								</div>
-                            </div>
+							</div>
+							<p>
+								<h3>CHALLENGES & SOLUTIONS</h3>
+								The first challenge faced was determining what file format should be used for the save files.  I debated on using a custom file format or a predefined file format (JSON, XML, binary).  In the end, JSON was chosen as the file format for the save files.  I decided not to use a custom file format as open source libraries already exist to serialize to and deserialize from JSON.  JSON is also a human-readable format, which makes debugging easier.  As binary is not human-readable, it makes it hard to verify that the correct values are being stored.  While I had experience working with both JSON and XML files, I was more familiar with JSON, but JSON files also tended to be smaller than XML files, which is important in case large amounts of data need to be stored in a save file.  
+								<br><br>
+								While programming the save system, I found that I would need game-specific information when writing to or reading from a save file.  I could design the save system to be specific to the demo game, but I chose to make the save system generic enough so it could be used by any game.  To do this, a reference to a function would be passed by the game to determine what data should be recorded when writing the game to a file and a reference to another function that would specifically instruct how to use the data loaded in from a read JSON file.  This allows for the game’s developer to choose what specific pieces of information (i.e. score, objects in the game, object properties) should be written to the save file and for the data read from the save file to be validated before being loaded into the game.  
+							</p>
+							<p></p>
+
+							<div>
+								<h3>Save System Update</h3>
+								save_sys_sample_game/update_save
+								<div class="codeBlock" style="height:240px">
+									<pre>
+										<code>
+	static void update_save(save_sys_sample_game_t* game)
+	{
+		save_sys_update(game, game->save_sys, game->window, write_save, load_save);
+	}
+										</code>
+									</pre>
+								</div>
+								<br>
+								save_sys/save_sys_update
+								<div class="codeBlock">
+									<pre>
+										<code>
+	void save_sys_update(void* game, save_sys_t* save_sys, wm_window_t* game_window, 
+		void (*game_write_save)(void* game, save_sys_t* save_sys), 
+		void (*game_load_save)(void* game, save_sys_t* save_sys))
+	{
+		uint32_t key_mask = wm_get_key_mask(game_window);
+		int last_save_file_id = save_sys->last_file_id;
+	
+		int save_file_id;
+		if (key_mask & k_key_0)
+		{
+			save_file_id = 0;
+		}
+		else if (key_mask & k_key_1)
+		{
+			save_file_id = 1;
+		}
+		else if (key_mask & k_key_2)
+		{
+			save_file_id = 2;
+		}
+		else if (key_mask & k_key_3)
+		{
+			save_file_id = 3;
+		}
+		else if (key_mask & k_key_4)
+		{
+			save_file_id = 4;
+		}
+		else if (key_mask & k_key_5)
+		{
+			save_file_id = 5;
+		}
+		else if (key_mask & k_key_6)
+		{
+			save_file_id = 6;
+		}
+		else if (key_mask & k_key_7)
+		{
+			save_file_id = 7;
+		}
+		else if (key_mask & k_key_8)
+		{
+			save_file_id = 8;
+		}
+		else if (key_mask & k_key_9)
+		{
+			save_file_id = 9;
+		}
+		else
+		{
+			save_file_id = -1;
+		}
+	
+		// Only register inputs if the number key is different
+		if (save_file_id == last_save_file_id)
+		{
+			return;
+		}
+	
+		if (save_file_id > -1)
+		{
+			if (key_mask & k_key_ctrl)
+			{
+				save_sys_read_save(save_sys, (unsigned int)(save_file_id));
+				game_load_save(game, save_sys);
+			}
+			else if (key_mask & k_key_delete)
+			{
+				save_sys_delete_save(save_sys, (unsigned int)(save_file_id));
+			}
+			else
+			{
+				save_sys->jobj = json_object_new_object();
+				game_write_save(game, save_sys);
+				const char* save_file_content = save_sys_get_jobj_string(save_sys);
+				save_sys_write_save(save_sys, (unsigned int)(save_file_id), save_file_content);
+			}
+		}
+		save_sys->last_file_id = save_file_id;
+	}
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+
+							<div>
+								<h3>Reading from a Save File</h3>
+								save_sys/save_sys_read_save
+								<div class="codeBlock">
+									<pre>
+										<code>
+	void save_sys_read_save(save_sys_t* save_sys, unsigned int save_id)
+	{
+		char* file_name = save_sys_get_file_name(save_sys, save_id);
+		fs_work_t* work = fs_read(save_sys->fs, file_name, save_sys->heap, true, false);
+		fs_work_wait(work);
+		// Check if the buffer is not empty
+		if (fs_work_get_buffer(work) != NULL)
+		{
+			save_sys->jobj = json_tokener_parse((char*)(fs_work_get_buffer(work)));
+		}
+		else
+		{
+			json_object_put(save_sys->jobj);
+			save_sys->jobj = NULL;
+		}
+		fs_work_and_buffer_destroy(work);
+		heap_free(save_sys->heap, file_name);
+	}
+										</code>
+									</pre>
+								</div>
+								<br>
+								save_sys_sample_game/load_save
+								<div class="codeBlock">
+									<pre>
+										<code>
+	static void load_save(void* game, save_sys_t* save_sys)
+	{
+		save_sys_sample_game_t* s_game = (save_sys_sample_game_t*)game;
+	
+		json_object* jobj = save_sys_get_jobj(save_sys);
+		if (jobj == NULL)
+		{
+			return;
+		}
+	
+		remove_all_entities(s_game);
+	
+		struct json_object_iterator it = json_object_iter_begin(jobj);
+		struct json_object_iterator itEnd = json_object_iter_end(jobj);
+	
+		while (!json_object_iter_equal(&it, &itEnd))
+		{
+			const char* curr_component = json_object_iter_peek_name(&it);
+	
+			if (strstr(curr_component, "player"))
+			{
+				load_player(s_game, json_object_iter_peek_value(&it));
+			}
+	
+			if (strstr(curr_component, "traffic"))
+			{
+				load_traffic(s_game, json_object_iter_peek_value(&it));
+			}
+	
+			json_object_iter_next(&it);
+		}
+	}
+										</code>
+									</pre>
+								</div>
+							</div>
+
+							<br>
+
+							<div>
+								<h3>Writing to a Save File</h3>
+								save_sys_sample_game/write_save
+								<div class="codeBlock" style="height:400px">
+									<pre>
+										<code>
+	static void write_save(void* game, save_sys_t* save_sys)
+	{
+		json_object* save_sys_jobj = save_sys_get_jobj(save_sys);
+	
+		save_sys_sample_game_t* s_game = (save_sys_sample_game_t*)game;
+	
+		record_players(s_game, save_sys_jobj);
+		record_traffic(s_game, save_sys_jobj);
+	}
+										</code>
+									</pre>
+								</div>
+								<br>
+								save_sys/save_sys_write_save
+								<div class="codeBlock">
+									<pre>
+										<code>
+	int save_sys_write_save(save_sys_t* save_sys, unsigned int save_id, const char* save_data)
+	{
+		json_object* jobj = json_tokener_parse(save_data);
+		if (jobj == NULL)
+		{
+			return -1;
+		}
+		save_sys->jobj = jobj;
+		char* file_name = save_sys_get_file_name(save_sys, save_id);
+		fs_work_t* work = fs_write(save_sys->fs, file_name, save_data, strlen(save_data), false);
+		fs_work_wait(work);
+		fs_work_destroy(work);
+		heap_free(save_sys->heap, file_name);
+		return 0;
+	}
+										</code>
+									</pre>
+								</div>
+							</div>
                         </section>
 					</div>
 				</div>

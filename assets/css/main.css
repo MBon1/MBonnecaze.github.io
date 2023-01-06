@@ -2724,3 +2724,8 @@ header.major .date:before, header.major .date:after {
   .h4Inner {
 	margin-left: 15px;
   }
+
+  .youtubeVideo {
+	float: right;
+	margin: 35px 30px 0 30px;
+  }
