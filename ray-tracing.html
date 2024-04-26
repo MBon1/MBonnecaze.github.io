@@ -54,7 +54,7 @@
 								<h2>Ray Tracing in Participating Media</h2>
 								<h3>Advanced Computer Graphics Final Project, 2023</h3>
 								<h3>Language: C++</h3>
-								<h3><a href="https://github.com/samiamiamsamiam/csci4350finalproject/blob/main/src/raytracer.cpp" title='This link will take you to the raytracer.cpp file, where most of my contributions were made.' text>GitHub (Ray Tracer)</a></h3>
+								<!--<h3><a href="https://github.com/samiamiamsamiam/csci4350finalproject/blob/main/src/raytracer.cpp" title='This link will take you to the raytracer.cpp file, where most of my contributions were made.' text>GitHub (Ray Tracer)</a></h3>-->
 							</header>
 							<div class="container">
 								<p>
@@ -64,34 +64,41 @@
 									<div class="col-6 col-12-medium">
 										My contributions to this project include:
 										<ul class="experience_description">
-											<li>Implementing volumetric shadows through ray casting during ray marching</li>
+											<li>Implementing volumetric shadows through ray casting during ray marching<!-- after attempting to do so with shadow maps--></li>
+											<!--How to show problem solving skills? -->
 											<li>Enhancing our implementation of ray tracing and light volumes by factoring in intersections with semi-transparent materials to color the light, giving a stained-glass-like effect</li>
 										</ul>
 									</div>
+
 									<div class="col-6 col-12-medium imp-medium experience_demo">
 										<div class="carousel" >
 											<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/cathedral_3_final.png" class="carousel_image">
+													<img src="images/ray-tracing/cathedral_3_final.png" class="carousel_image"><br>
+													A render showcasing using patterned glass object and the light rays colored by it.  
 												</div>
 											</div>
 											<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/shadow_volume.png" class="carousel_image">
+													<img src="images/ray-tracing/shadow_volume.png" class="carousel_image"><br>
+													A simple example render showing a volumetric shadow.  While we wanted to implement volumetric shadows with shadow maps, due to time constraints and challenges with OpenGL, I proposed this as an alternative, though naive, solution.
 												</div>
 											</div>
 											<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/color-bleeding.png" class="carousel_image">
+													<img src="images/ray-tracing/color-bleeding.png" class="carousel_image"><br>
+													An example of the light being colored by red and blue glass objects. The area underneath both the red and blue glass objects result in a blend of the two colors, coloring the objects and participating media below purple.
 												</div>
 											</div>
-											<div class="carousel_item">
+											<!-- <div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/cathedral_3_final_alt.png" class="carousel_image">
+													<img src="images/ray-tracing/cathedral_3_final_alt.png" class="carousel_image"><br>
+													A render where the camera is facing the light source with a glass object between the camera and light source.
 												</div>
-											</div>
+											</div>-->
 										</div>
 									</div>
+
 								</div>
 							</div>
 						</section>

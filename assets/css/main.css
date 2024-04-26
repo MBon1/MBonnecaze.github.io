@@ -2764,9 +2764,13 @@ li ul {
 	height: 100%;
 	width: 480px;
 	padding: 0em 0em 0.7em 0em;
-	font-family: 'Yanone Kaffeesatz';
+	/*font-family: 'Yanone Kaffeesatz';
 	font-weight: bold;
-	font-size: 2em;
+	font-size: 2em;*/
+	font-size: 12pt;
+	font-family: 'Yanone Kaffeesatz';
+	line-height: 1.85em;
+	font-weight: 300;
 	color: white;
 	display: none;	
 }
@@ -2783,14 +2787,16 @@ li ul {
 	/*padding: 0.288em;*/
 	position: absolute;
 	bottom: 0;
+	padding-top: 10px;
 	/*left: 0;*/
 	text-align: center;
 	background: #fff url("images/bg01.jpg");
 }
 
 .carousel_image_background {
+	padding: 20px 30px 20px 30px;
 	width: 480px;
-	height: 270px;
+	height: 495px;
 	background: #fff url("images/bg01.jpg");
 }
 
@@ -2801,11 +2807,12 @@ li ul {
 	display:block;
 	margin-left: auto;
 	margin-right: auto;
+	margin-top: 0%;
 }
 
 .carousel_button {
-	width: 10px;
-	height: 10px;
+	width: 30px;
+	height: 30px;
 	display: inline-block;
 	background: rgba(255, 255, 255, 0.2);
 	border-radius: 50%;
@@ -2814,7 +2821,10 @@ li ul {
 }
 
 .carousel_button-selected {
+	width: 25px;
+	height: 25px;
 	background: rgba(255, 255, 255, 0.5);
+	opacity: 0.3;
 }
 
 .carousel_arrow {
@@ -2825,7 +2835,6 @@ li ul {
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-o-user-select: none;
-	top: 0.1em;
 	color: rgba(191, 191, 191);
 }
 
