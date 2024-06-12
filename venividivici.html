@@ -7,7 +7,7 @@
 <html>
 
 <head>
-	<title>Veni Vidi Vici</title>
+	<title>Veni, Vidi, Vici</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="assets/css/main.css" />
@@ -51,7 +51,7 @@
 						<!-- Main Content -->
 						<section>
 							<header>
-								<h2>Veni Vidi Vici</h2>
+								<h2>Veni, Vidi, Vici</h2>
 								<h3>Methodology: Agile</h3>
 								<h3>Engine: Unity</h3>
 								<h3>Language: C#</h3>
@@ -60,7 +60,7 @@
 								<h3><a href="https://store.steampowered.com/app/2330600/Veni_Vidi_Vici/">Steam Page</a></h3>
 							</header>
 							<p>
-								<i>Veni Vidi Vici</i> is a dungeon crawler with rhythm and monster collecting elements made using the Unity Engine.  In <i>Veni Vidi Vici</i>, the player takes control of the former warlord Delphine as she explores the ruins of the civilization she destroyed to restore her lost memory and find redemption.  Through dances, she is capable of purifying and befriending the dungeon's various creatures, who in turn grant her additional dances for combat and skills for exploring the dungeon.  
+								<i>Veni, Vidi, Vici</i> is a dungeon crawler with rhythm and monster collecting elements made using the Unity Engine.  In <i>Veni, Vidi, Vici</i>, the player takes control of the former warlord Delphine as she explores the ruins of the civilization she destroyed to restore her lost memory and find redemption.  Through dances, she is capable of purifying and befriending the dungeon's various creatures, who in turn grant her additional dances for combat and skills for exploring the dungeon.  
 							</p>
 							<div >
 							<div class="container">
@@ -68,11 +68,11 @@
 									<div class="col-6 col-12-medium">
 										<p>
 											<h3>DEMO</h3>
-											In the development of <i>Veni Vidi Vici</i>, my main focuses include the data management system, the party and inventory systems, the interactables found in the dungeon, the UIs, and Steamworks API integration.  
+											In the development of <i>Veni, Vidi, Vici</i>, my main focuses include the data management system, the party and inventory systems, the interactables found in the dungeon, the UIs, and Steamworks API integration.  
 										</p>
 									</div>
 									<div class="col-6 col-12-medium imp-medium">
-										<video controls width="95%" height="auto" name="Veni Vidi Vici">
+										<video controls width="95%" height="auto" name="Veni, Vidi, Vici">
 											<source src="videos/VVV_Trailer_v3.mp4">
 										</video>
 									</div>
@@ -80,7 +80,7 @@
 							</div>
 							<p>
 								<h3>CHALLENGES & SOLUTIONS</h3>
-								One of the challenges faced while developing <i>Veni Vidi Vici</i> was how to preserve critical information such as the player's party or inventory between scenes and play sessions, leading to my decisions to have this information be stored in a JSON file.  Storing this information into JSON files also assists in debugging as the changes to the files' contents can be validated even if the game crashes.  
+								One of the challenges faced while developing <i>Veni, Vidi, Vici</i> was how to preserve critical information such as the player's party or inventory between scenes and play sessions, leading to my decisions to have this information be stored in a JSON file.  Storing this information into JSON files also assists in debugging as the changes to the files' contents can be validated even if the game crashes.  
 							</p>
 
 							<div>
@@ -550,7 +550,7 @@
 							<br>
 							<p>
 								<br>
-								During the development of <i>Veni Vidi Vici</i>, I was tasked with implementing the dialogs defined by the narrative designer.  To provide more flexibility and improve productivity, I developed an event processor engine.  Rather than hardcoding the dialog text and various event triggers when a dialog is displayed, I created an xml layout in which those values can be defined.  
+								During the development of <i>Veni, Vidi, Vici</i>, I was tasked with implementing the dialogs defined by the narrative designer.  To provide more flexibility and improve productivity, I developed an event processor engine.  Rather than hardcoding the dialog text and various event triggers when a dialog is displayed, I created an xml layout in which those values can be defined.  
 							</p>
 							<div>
 								Example Dialog xml:
@@ -900,7 +900,7 @@
 							<br>
 							<p>
 								<br>
-								In <i>Veni Vidi Vici</i>, the player will encounter trees that they can topple over and raise back up.  When toppled over, these trees can be used as a bridge, allowing for the player to cross over pits and hazardous areas that they previously would not have been able to.  This requires that the collider types of each tile the toppled tree falls on to be recorded so that the tiles' collision can be restored when the tree is raised.  As a toppled tree can have other trees topple on top of it, though, before a toppled tree can be raised, it needs to check first that no other trees are on top of it.  To handle this, I have a static dictionary that uses Vector3Int as the keys (representing the tiles) and a stack of GameObjects as the values (representing all of the toppled trees that are on that tile and the order they fell on to that tile).  
+								In <i>Veni, Vidi, Vici</i>, the player will encounter trees that they can topple over and raise back up.  When toppled over, these trees can be used as a bridge, allowing for the player to cross over pits and hazardous areas that they previously would not have been able to.  This requires that the collider types of each tile the toppled tree falls on to be recorded so that the tiles' collision can be restored when the tree is raised.  As a toppled tree can have other trees topple on top of it, though, before a toppled tree can be raised, it needs to check first that no other trees are on top of it.  To handle this, I have a static dictionary that uses Vector3Int as the keys (representing the tiles) and a stack of GameObjects as the values (representing all of the toppled trees that are on that tile and the order they fell on to that tile).  
 							</p>
 							<div>
 								Alter Tile Collision Code From “NewToppleable.cs”
