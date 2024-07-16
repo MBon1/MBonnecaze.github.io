@@ -57,16 +57,22 @@
 								<!--<h3><a href="https://github.com/samiamiamsamiam/csci4350finalproject/blob/main/src/raytracer.cpp" title='This link will take you to the raytracer.cpp file, where most of my contributions were made.' text>GitHub (Ray Tracer)</a></h3>-->
 							</header>
 							<div class="container">
-								<p>
-									A teammate and I extended an implemention ray tracing from a previous assignment to now allow for an approximation of single-scatter ray tracing through a uniform participating media. 
-								</p>
 								<div class="row">
 									<div class="col-6 col-12-medium">
+										<p>
+											A teammate and I extended a ray tracing implementation from a previous assignment to allow for an approximation of single-scatter ray tracing through a uniform participating medium.
+										</p>
 										My contributions to this project include:
 										<ul class="experience_description">
-											<li>Implementing volumetric shadows through ray casting during ray marching<!-- after attempting to do so with shadow maps--></li>
+											<!--<li>Implementing volumetric shadows through ray casting during ray marching</li>--><!-- after attempting to do so with shadow maps-->
+											<li>Implementing volumetric shadows by performing a ray cast at each step during ray marching to check for occlusion between the point and the light source</li>
 											<!--How to show problem solving skills? -->
 											<li>Enhancing our implementation of ray tracing and light volumes by factoring in intersections with semi-transparent materials to color the light, giving a stained-glass-like effect</li>
+										</ul>
+										After the course, I made the following improvements based on feedback and my own observations: 
+										<ul class="experience_description">
+											<li>Added the ability to use semi-transparent textured materials instead of requiring monocolored materials</li>
+											<li>FFixed a bug where shadow volumes would not be ignored during rendering if the shadow volume was in front of an occlusive object</li>
 										</ul>
 									</div>
 
@@ -74,28 +80,40 @@
 										<div class="carousel" >
 											<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/cathedral_3_final.png" class="carousel_image"><br>
-													A render showcasing using patterned glass object and the light rays colored by it.  
+													<img src="images/ray-tracing/cathedral_3_final_v2.png" class="carousel_image"><br>
+													A render of a complex scene using a textured glass object, showcasing the light rays colored by it.  
 												</div>
 											</div>
 											<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/shadow_volume.png" class="carousel_image"><br>
-													A simple example render showing a volumetric shadow.  While we wanted to implement volumetric shadows with shadow maps, due to time constraints and challenges with OpenGL, I proposed this as an alternative, though naive, solution.
+													<img src="images/ray-tracing/shadow_volume_3_fixed.png" class="carousel_image"><br>
+													A simple example render showing a volumetric shadow.  While we wanted to implement volumetric shadows with shadow maps, due to time constraints and challenges with OpenGL, I proposed and implemented the alternative, though naïve, solution used here.
 												</div>
 											</div>
 											<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/color-bleeding.png" class="carousel_image"><br>
-													An example of the light being colored by red and blue glass objects. The area underneath both the red and blue glass objects result in a blend of the two colors, coloring the objects and participating media below purple.
+													<img src="images/ray-tracing/color-bleeding-area.png" class="carousel_image"><br>
+													An example of the light being colored by red and blue glass objects. The area underneath both the red and blue glass objects results in a blend of the two colors, coloring the objects and participating media below purple.
 												</div>
 											</div>
-											<!-- <div class="carousel_item">
+											<!--<div class="carousel_item">
 												<div class="carousel_image_background">
-													<img src="images/ray-tracing/cathedral_3_final_alt.png" class="carousel_image"><br>
-													A render where the camera is facing the light source with a glass object between the camera and light source.
+													<img src="images/ray-tracing/cathedral_3_final_alt_v2.png" class="carousel_image"><br>
+													A render where the camera is facing the light source with a glass object between the camera and light source. 
 												</div>
 											</div>-->
+											<div class="carousel_item">
+												<div class="carousel_image_background">
+													<img src="images/ray-tracing/render_cathedral_3.png" class="carousel_image"><br>
+													A render before the fix to the shadow volumes was made.
+												</div>
+											</div>
+											<div class="carousel_item">
+												<div class="carousel_image_background">
+													<img src="images/ray-tracing/render_cathedral_4_fixed.png" class="carousel_image"><br>
+													A render after the fix to the shadow volumes was made.
+												</div>
+											</div>
 										</div>
 									</div>
 

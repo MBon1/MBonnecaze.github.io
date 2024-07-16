@@ -123,4 +123,4 @@ function advanceAutoCycle() {
     }, delayInMilliseconds);
 }
 
-advanceAutoCycle();
+//advanceAutoCycle();
