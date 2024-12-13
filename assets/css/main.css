@@ -2739,6 +2739,10 @@ header.major .date:before, header.major .date:after {
 	padding-left: 2em;
 }
 
+.experience_demo {
+	text-align: center;
+}
+
 /* Sub-lists */
 li ul {
 	margin: 0;
@@ -2748,6 +2752,8 @@ li ul {
 /* Carousel */
 .carousel {
 	position: relative;
+	max-width: fit-content;
+  	margin-inline: auto;
 }
 
 .carousel_item {
@@ -2801,7 +2807,7 @@ li ul {
 }
 
 .carousel_image {
-	max-width: 480px;
+	max-width: 420px;
 	max-height: 270px;
 
 	display:block;
